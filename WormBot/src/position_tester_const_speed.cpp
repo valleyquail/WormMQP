@@ -77,8 +77,12 @@ void loop()
           break;
         }
       }
-      while(1);
-    }
+      // reboot
+      SRC_GPR5 = 0x0BAD00F1;
+      SCB_AIRCR = 0x05FA0004;
+      while (1) ;
+      
+      }
     
   }
   report();
