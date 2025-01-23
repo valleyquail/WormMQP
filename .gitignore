@@ -30,3 +30,14 @@
 *.exe
 *.out
 *.app
+
+#Lots of random stuff
+SACRED_PCB/SACRED_PCB-backups/*
+SACRED_PCB/SPICE
+SACRED_PCB/'#auto_saved_files#
+
+EmailPics/*
+
+WormBot/WormBotPython/.idea/*
+WormBot/WormBotPython/__pycache__/*
+WormBot/.vscode/*
