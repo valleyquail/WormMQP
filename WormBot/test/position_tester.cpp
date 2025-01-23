@@ -22,7 +22,7 @@ void setup()
 
   
   stepper.setMaxSpeed(600.0);   // the motor accelerates to this speed exactly without overshoot. Try other values.
-  stepper.setAcceleration(100.0); 
+  stepper.setAcceleration(600.0); 
   stepper.setSpeed(600);
   stepper.moveTo(3000); 
 
