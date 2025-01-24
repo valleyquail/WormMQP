@@ -9,12 +9,21 @@ import serial.tools.list_ports
 ports = serial.tools.list_ports.comports()
 available_ports = [port.device for port in ports]
 
+ports = 0
 print("Available serial ports:")
 for i, port in enumerate(available_ports):
     print(f"{i}: {port}")
+    ports += 1
 
-# Prompt user to select a serial port
-port_index = int(input("Select a serial port by index: "))
+if ports == 0:
+    print("No serial ports available. Exiting program.")
+    exit()
+
+if ports == 1:
+    port_index = 0
+else:
+    # Prompt user to select a serial port
+    port_index = int(input("Select a serial port by index: "))
 serial_port = available_ports[port_index]
 baud_rate = 115200  # Replace with your baud rate
 
@@ -23,7 +32,7 @@ ser = serial.Serial(serial_port, baud_rate)
 
 # Open the CSV file for writing
 timestamp = time.strftime('%Y%m%d_%H%M%S')
-csv_file = open(f'data_{timestamp}.csv', 'w', newline='')
+csv_file = open(f'raw_data/data_{timestamp}.csv', 'w', newline='')
 csv_writer = csv.writer(csv_file)
 
 # Write the header to the CSV file
