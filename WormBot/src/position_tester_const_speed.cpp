@@ -6,7 +6,7 @@
 #define POS_0 -400
 #define POS_1 400
 
-#define CYCLES 3
+#define CYCLES 20
 
 // Define pin connections & motor's steps per revolution
 const int dirPin = 2;
@@ -109,7 +109,8 @@ void report()
     // Serial.print(stepper.currentPosition());
     // Serial.print(" V: ");
     // Serial.println(sum/count);
-    Serial.println("C: "+String(cycle)+" P: "+String(stepper.currentPosition())+" V: "+String(sum/count));
+    // Serial.println("C: "+String(cycle)+" P: "+String(stepper.currentPosition())+" V: "+String(sum/count));
+    Serial.println(String(cycle)+":"+String(stepper.currentPosition())+":"+String(sum/count));
     sum = 0;
     count = 0;
   }
