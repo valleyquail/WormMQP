@@ -1,5 +1,9 @@
 // #include <Arduino.h>
 #include <AccelStepper.h>
+#include <SPI.h>
+#include <SD.h>
+
+File logFile;
 
 #define SPEED 250
 
@@ -42,6 +46,8 @@ void setup()
 
   Serial.begin(500000);
   while (!Serial);
+  SD.begin(BUILTIN_SDCARD);
+  logFile = SD.open("test.txt", FILE_WRITE);
 }
 
 
@@ -62,7 +68,7 @@ void loop()
     stepper.moveTo(POS_0);
     stepper.setSpeed(SPEED);
     uint32_t time=millis();
-    Serial.flush();
+    // Serial.flush();
     while(millis()-time<1000){
       report();
     }
@@ -82,6 +88,7 @@ void loop()
         }
       }
       // reboot
+      logFile.close();
       SRC_GPR5 = 0x0BAD00F1;
       SCB_AIRCR = 0x05FA0004;
       while (1) ;
@@ -110,7 +117,8 @@ void report()
     // Serial.print(" V: ");
     // Serial.println(sum/count);
     // Serial.println("C: "+String(cycle)+" P: "+String(stepper.currentPosition())+" V: "+String(sum/count));
-    Serial.println(String(cycle)+":"+String(stepper.currentPosition())+":"+String(sum/count));
+    // Serial.println(String(cycle)+":"+String(stepper.currentPosition())+":"+String(sum/count));
+    logFile.println(String(cycle)+":"+String(stepper.currentPosition())+":"+String(sum/count));
     sum = 0;
     count = 0;
   }
