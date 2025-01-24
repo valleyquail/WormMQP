@@ -25,35 +25,63 @@ else:
     # Prompt user to select a serial port
     port_index = int(input("Select a serial port by index: "))
 serial_port = available_ports[port_index]
-baud_rate = 115200  # Replace with your baud rate
+baud_rate = 500000  # Replace with your baud rate
 
 # Open the serial port
 ser = serial.Serial(serial_port, baud_rate)
 
 # Open the CSV file for writing
-timestamp = time.strftime('%Y%m%d_%H%M%S')
-csv_file = open(f'raw_data/data_{timestamp}.csv', 'w', newline='')
+timestamp = time.strftime('%m%d_%H%M%S')
+print(f"Data collection started. Saving data to data_{timestamp}.csv")
+# Data\raw_data\data_20250123_160441.csv
+csv_file = open(f'C:/Users/camca/WormMQP/Data/raw_data/data_{timestamp}.csv', 'w', newline='')
 csv_writer = csv.writer(csv_file)
 
 # Write the header to the CSV file
-csv_writer.writerow(['Timestamp', 'Data'])
+csv_writer.writerow(['Index', 'Data'])
+i = 0
 
 try:
     while True:
         # Read a line from the serial port
         line = ser.readline().decode('utf-8').strip()
+        # ser.flushInput()
         
-        # Get the current timestamp
-        timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+        # Get the current timestamp (not needed; time from teensy)
+        # timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
         
         # Write the data to the CSV file
-        csv_writer.writerow([timestamp, line])
-        print(f'{timestamp}, {line}')
+        csv_writer.writerow([i, line])
+        print(line)
+        i += 1
         
 except serial.SerialException:
     print("Data collection stopped.")
+    print(f"Saving data to data_{timestamp}.csv")
 
 finally:
     # Close the serial port and CSV file
     ser.close()
+    
+    # Reopen the CSV file for reading and formatting
+    csv_file.close()
+    # csv_file = open(f'C:/Users/camca/WormMQP/Data/raw_data/data_{timestamp}.csv', 'r', newline='')
+    # csv_reader = csv.reader(csv_file)
+
+    # # Open a new CSV file for writing formatted data
+    # formatted_csv_file = open(f'C:/Users/camca/WormMQP/Data/raw_data/formatted_data_{timestamp}.csv', 'w', newline='')
+    # csv_writer = csv.writer(formatted_csv_file)
+
+    # # Write the header to the new CSV file
+    # csv_writer.writerow(['Index', 'Data'])
+
+    # # Iterate through the lines of the original CSV file and write to the new CSV file
+    # i = 0
+    # for row in csv_reader:
+    #     if i > 0:  # Skip the header row
+    #         csv_writer.writerow([i - 1, row[1].decode('utf-8').strip()])
+    #     i += 1
+
+    # print("Data formatted")
+    # formatted_csv_file.close()
     csv_file.close()

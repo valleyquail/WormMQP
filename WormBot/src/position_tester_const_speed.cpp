@@ -1,7 +1,7 @@
 // #include <Arduino.h>
 #include <AccelStepper.h>
 
-#define SPEED 500
+#define SPEED 250
 
 #define POS_0 -400
 #define POS_1 400
@@ -18,9 +18,12 @@ const int inputPin = A0;
 AccelStepper stepper(AccelStepper::DRIVER, stepPin, dirPin);
 
 u_int16_t cycle = 0;
+long last = 0;
+long sum = 0;
+double count = 0;
 
 u_int16_t last_report = 0;
-#define REPORT_INTERVAL 10
+#define REPORT_INTERVAL 150
 
 void report();
 
@@ -37,7 +40,7 @@ void setup()
   stepper.moveTo(POS_0); // CALL BEFORE SETTING SPEED!!11!1111!
   stepper.setSpeed(SPEED);
 
-  Serial.begin(115200);
+  Serial.begin(500000);
   while (!Serial);
 }
 
@@ -59,6 +62,7 @@ void loop()
     stepper.moveTo(POS_0);
     stepper.setSpeed(SPEED);
     uint32_t time=millis();
+    Serial.flush();
     while(millis()-time<1000){
       report();
     }
@@ -89,18 +93,24 @@ void loop()
 
 }
 
+
 void report()
 {
+  sum += analogRead(inputPin);
+  count++;
   if ( millis()-last_report>REPORT_INTERVAL)
   {
     last_report=millis();
-    Serial.print("C: ");
-    Serial.print(cycle);
-    Serial.print(" T: ");
-    Serial.print(millis());
-    Serial.print(" P: ");
-    Serial.print(stepper.currentPosition());
-    Serial.print(" V: ");
-    Serial.println(analogRead(inputPin));
+    // Serial.print("C: ");
+    // Serial.print(cycle);
+    // Serial.print(" T: ");
+    // Serial.print(millis());
+    // Serial.print(" P: ");
+    // Serial.print(stepper.currentPosition());
+    // Serial.print(" V: ");
+    // Serial.println(sum/count);
+    Serial.println("C: "+String(cycle)+" P: "+String(stepper.currentPosition())+" V: "+String(sum/count));
+    sum = 0;
+    count = 0;
   }
 }
