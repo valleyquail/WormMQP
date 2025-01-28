@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from SensorNode import SensorNode
+from Nodes import SensorNode
 
 ###################################
 ###### Model Parameters ###########
