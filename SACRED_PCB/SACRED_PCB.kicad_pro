@@ -599,6 +599,30 @@
           "label": "Description",
           "name": "Description",
           "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Name",
+          "name": "Sim.Name",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Pins",
+          "name": "Sim.Pins",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Device",
+          "name": "Sim.Device",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Library",
+          "name": "Sim.Library",
+          "show": false
         }
       ],
       "filter_string": "",
@@ -644,7 +668,7 @@
       "workbook_filename": ""
     },
     "page_layout_descr_file": "",
-    "plot_directory": "",
+    "plot_directory": "./",
     "spice_current_sheet_as_root": false,
     "spice_external_command": "spice \"%I\"",
     "spice_model_current_sheet_as_root": true,
@@ -662,18 +686,6 @@
     [
       "04ddeee5-9645-4496-a055-c41ccd67a2b9",
       "Analog_Channels_0"
-    ],
-    [
-      "495e5b16-1797-4964-b780-3028298d487e",
-      "Analog_Channels_1"
-    ],
-    [
-      "1738e58a-0630-423a-bb4b-49c15b47895d",
-      "Analog_Channels_2"
-    ],
-    [
-      "11ec5a6f-22ac-4828-84cc-b42f3226a86a",
-      "Analog_Channels_3"
     ]
   ],
   "text_variables": {}
