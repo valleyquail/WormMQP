@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
-from Nodes import Node, SensorNode, VertexNode
+from Nodes import Node, MidpointNode, VertexNode
 from SensorEdge import SensorEdge
 
 
@@ -13,7 +13,7 @@ from SensorEdge import SensorEdge
 # DOI: 10.1088/1361-665X/ad212c
 
 
-def generate_unit(beta, major_sl, minor_sl, num_sides, height_index=0, prev_top_nodes=None):
+def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0, prev_top_nodes=None):
     """ Generate a unit cell
     Generates a unit cell with the given parameters. A unit cell comprises a set of vertices that outline the bottom
     and top faces of a cell as well as the vertices in the middle that form the creases. The vertices are returned in a list.
@@ -25,12 +25,15 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, height_index=0, prev_top_
     return: the coordinates of the vertices of the unit cell
    """
 
-    def parseArrayToNodes(array: np.ndarray, heightIndex: int, euclidianRange: float):
+    def parseArrayToNodes(array: np.ndarray, heightIndex: int, euclidianRange: float, type: str):
         nodes = []
         nodeEdgePairs = []
         for i in range(array.shape[0]):
             # If this is not the base of the unit, increment the level by one
-            node = VertexNode(array[i, 0], array[i, 1], array[i, 2], heightIndex)
+            if type == 'crease':
+                node = MidpointNode(array[i, 0], array[i, 1], array[i, 2], heightIndex)
+            else:
+                node = VertexNode(array[i, 0], array[i, 1], array[i, 2], heightIndex)
             nodes.append(node)
         # Add the other base nodes as neighbours
         for i, node in enumerate(nodes):
@@ -41,27 +44,25 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, height_index=0, prev_top_
                         nodeEdgePairs.append((node, other_node))
         return nodes, nodeEdgePairs
 
-    def parseArrayToCreases(array: np.ndarray, heightIndex: int, euclidianRange: float, minor_sl: float):
-        nodes, long_edges, sensor_edges = [], [], []
+    def parseArrayToSensors(array: np.ndarray, heightIndex: int, euclidianRange: float):
+        nodes: list[VertexNode] = []
+        sensorEdges: list[SensorEdge] = []
         for i in range(array.shape[0]):
             # If this is not the base of the unit, increment the level by one
-            node = SensorNode(array[i, 0], array[i, 1], array[i, 2], heightIndex)
+            node = VertexNode(array[i, 0], array[i, 1], array[i, 2], heightIndex)
             nodes.append(node)
         # Add the other base nodes as neighbours
         for i, node in enumerate(nodes):
             for neighbor in nodes[i:]:
-                # If the node is very close/the minor side length away from the neighbor, add it as a sensor edge
                 if node.getPosition() != neighbor.getPosition():
                     dist = norm(np.array(node.getPosition()) - np.array(neighbor.getPosition()))
-                    if minor_sl * 0.95 < dist < minor_sl * 1.05:
-                        sensor_edges.append((node, neighbor))
-                    # If the node is very close/the euclidian range away from the neighbor, add it as a normal edge
-                    elif dist < euclidianRange * 1.1:
-                        long_edges.append((node, neighbor))
-
-        return nodes, long_edges, sensor_edges
+                    if dist < euclidianRange * 1.05:
+                        # Make a sensor edge without an id since it will be assigned later
+                        sensorEdges.append(SensorEdge(node, neighbor))
+        return nodes, sensorEdges
 
     nodeEdges = []
+    sensorEdges = []
     # Total height of a unit
     h_unit = minor_sl / 2 * np.tan(beta)
     # Offset the base height by the height index
@@ -83,13 +84,16 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, height_index=0, prev_top_
 
     # Create the base nodes and add them as neighbors
     if prev_top_nodes == None:
-        baseNodes, baseEdges = parseArrayToNodes(vertex_coords_base, height_index, major_sl)
+        baseNodes, baseEdges = parseArrayToNodes(vertex_coords_base, height_index, major_sl, 'vertex')
         nodeEdges += baseEdges
     else:
         baseNodes = prev_top_nodes
 
-    topNodes, topEdges = parseArrayToNodes(vertex_coords_top, height_index + 1, major_sl)
-    nodeEdges += topEdges
+    if height_index == num_units - 1:
+        topNodes, edges = parseArrayToNodes(vertex_coords_top, height_index + 1, major_sl, 'vertex')
+        nodeEdges += edges
+    else:
+        topNodes, sensorEdges = parseArrayToSensors(vertex_coords_top, height_index + 1, major_sl)
 
     # C is the point located halfway between the two vertices on the major_sl side, let's call them A and B
     theta_ACB = np.arccos((h_unit * np.sqrt(2)) / (2 * minor_sl))
@@ -121,7 +125,7 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, height_index=0, prev_top_
 
     creases = np.vstack((insets_pos, insets_neg))
 
-    creaseNodes, creaseEdges, sensorEdges = parseArrayToCreases(creases, height_index, major_sl - minor_sl, minor_sl)
+    creaseNodes, creaseEdges = parseArrayToNodes(creases, height_index, major_sl - minor_sl, 'crease')
     nodeEdges += creaseEdges
 
     # Add the creases as neighbours to the vertices
@@ -136,10 +140,10 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, height_index=0, prev_top_
 
 
 class Arm():
-    def __init__(self, beta: float, major_sl: float, minor_sl: float, numSides: int, num_units: int):
+    def __init__(self, beta: float, major_sl: float, minor_sl: float, numSides: int, numUnits: int):
         # Sorts the vertices and corners into an organized dictionary based on the height index of the node
 
-        def organizeByLayer(nodes: list[Node]) -> dict[int, list[SensorNode]]:
+        def organizeByLayer(nodes: list[Node]) -> dict[int, list[MidpointNode]]:
             """
              Organize the nodes into a dictionary based on their height index
              Makes it very convenient for iterating through the nodes in a layer by layer
@@ -155,54 +159,55 @@ class Arm():
                     organizedData[height_idx].append(nodes)
             return organizedData
 
-        def assignSensorIds(sensorEdgePairs: list[SensorNode, SensorNode]) -> dict[int, SensorEdge]:
+        def assignSensorIds(sensorEdges: list[SensorEdge]) -> dict[int, SensorEdge]:
             """
             Organize the edges into crease and vertex edges
             @:param edges: the edges to be organized
             @:return: a tuple containing the crease edges and the vertex edges
             """
-            sensorEdges = {}
-            for i, edge in enumerate(sensorEdgePairs):
-                sensorEdge = SensorEdge(edge[0], edge[1], i)
-                sensorEdges[i] = sensorEdge
-            return sensorEdges
+            sensors = {}
+            for i, edge in enumerate(sensorEdges):
+                edge.setSensorID(i)
+                sensors[i] = edge
+            return sensors
 
         # List of creases
-        creases: list[SensorNode] = []
-        vertices: list[VertexNode] = []
-        edgePairs: list[tuple[Node, Node]] = []
-        sensorEdges: list[tuple[SensorNode, SensorNode]] = []
+        _creases: list[MidpointNode] = []
+        _vertices: list[VertexNode] = []
+        _edgePairs: list[tuple[Node, Node]] = []
+        _sensor_edges: list[SensorEdge] = []
         # Array used to be fed back the the generate_unit function to make
         # the next unit's base it the top of the previous unit
         tNodes = None
         # Create and stack all the units into the organized data
-        for i in range(num_units):
-            bNodes, tNodes, cNodes, edges, sensors = generate_unit(beta, major_sl, minor_sl, numSides, i, tNodes)
-            creases += cNodes
-            vertices += bNodes
-            edgePairs += edges
-            sensorEdges += sensors
-        vertices += tNodes
+        for i in range(numUnits):
+            bNodes, tNodes, cNodes, edges, sensors = generate_unit(beta, major_sl, minor_sl, numSides, numUnits, i,
+                                                                   tNodes)
+            _creases += cNodes
+            _vertices += bNodes
+            _edgePairs += edges
+            _sensor_edges += sensors
+        _vertices += tNodes
 
         # Assign ids to each vertex node
-        for i, node in enumerate(vertices):
+        for i, node in enumerate(_vertices):
             node.id = i
 
         # Assign ids to each crease node
-        for i, node in enumerate(creases):
-            node.id = i + len(vertices)
+        for i, node in enumerate(_creases):
+            node.id = i + len(_vertices)
 
-        self.vertices = vertices
-        self.creases = creases
-        self.edges = edgePairs
-        self.organized: dict[int, list[SensorNode]] = organizeByLayer(creases + vertices)
-        self.edges: list[tuple[SensorNode, SensorNode]] = edgePairs
-        self.sensorEdges: dict[int, SensorEdge] = assignSensorIds(sensorEdges)
+        self.vertices = _vertices
+        self.creases = _creases
+        self.edges = _edgePairs
+        self.organized: dict[int, list[MidpointNode]] = organizeByLayer(_creases + _vertices)
+        self.edges: list[tuple[MidpointNode, MidpointNode]] = _edgePairs
+        self.sensorEdges: dict[int, SensorEdge] = assignSensorIds(_sensor_edges)
         self.beta: float = beta
         self.major_sl: float = major_sl
         self.minor_sl: float = minor_sl
         self.num_sides: int = numSides
-        self.num_units: int = num_units
+        self.num_units: int = numUnits
 
     def drawArm(self) -> None:
         def extractPoints() -> (np.ndarray, np.ndarray):
@@ -237,9 +242,7 @@ class Arm():
                     [nodePos[2], neighbourPos[2]], c="k")
 
         for sensorEdge in self.sensorEdges.values():
-            node1, node2 = sensorEdge.getNodes()
-            node1Pos = node1.getPosition()
-            node2Pos = node2.getPosition()
+            node1Pos, node2Pos = sensorEdge.getEndPoints()
             ax.plot([node1Pos[0], node2Pos[0]],
                     [node1Pos[1], node2Pos[1]],
                     [node1Pos[2], node2Pos[2]], c="r")

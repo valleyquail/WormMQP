@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Nodes import SensorNode
+from Nodes import VertexNode
 
 class SensorEdge:
 
-    def __init__(self, node1: SensorNode, node2: SensorNode, sensorID: int):
+    def __init__(self, node1: VertexNode, node2: VertexNode, sensorID: int=None):
         self.node1 = node1
         self.node2 = node2
         self.sensorID = sensorID
@@ -18,6 +18,9 @@ class SensorEdge:
 
     def getSensorID(self):
         return self.sensorID
+
+    def setSensorID(self, sensorID):
+        self.sensorID = sensorID
 
     def getStrain(self):
         return self.strain

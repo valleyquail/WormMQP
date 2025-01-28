@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Nodes import SensorNode
+from Nodes import MidpointNode
 
 ###################################
 ###### Model Parameters ###########

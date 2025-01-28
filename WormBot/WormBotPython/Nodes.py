@@ -35,7 +35,7 @@ class Node:
         return f"Node at position ({self.x:.2f}, {self.y:.2f}, {self.z:.2f}, level {self.level}, type {self.type})"
 
 
-class SensorNode(Node):
+class MidpointNode(Node):
     def __init__(self, initial_x: float, initial_y: float, initial_z: float, node_level: int):
         super().__init__(initial_x, initial_y, initial_z, node_level)
         self.type = 'crease'
