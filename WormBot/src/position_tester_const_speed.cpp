@@ -10,7 +10,8 @@ File logFile;
 #define POS_0 -400
 #define POS_1 400
 
-#define CYCLES 20
+// #define CYCLES 5
+int CYCLES = 5;
 
 // Define pin connections & motor's steps per revolution
 const int dirPin = 2;
@@ -26,7 +27,7 @@ long last = 0;
 long sum = 0;
 double count = 0;
 
-u_int16_t last_report = 0;
+u_int64_t last_report = 0;
 #define REPORT_INTERVAL 150
 
 void report();
@@ -46,8 +47,20 @@ void setup()
 
   Serial.begin(500000);
   while (!Serial);
-  SD.begin(BUILTIN_SDCARD);
-  logFile = SD.open("test.txt", FILE_WRITE);
+  while (Serial.available() == 0);
+  
+  if (Serial.available() > 0) {
+    String input = Serial.readString();
+    int index = input.indexOf("cycles=");
+    if (index != -1) {
+      int receivedCycles = input.substring(index + 7).toInt();
+      if (receivedCycles > 0) {
+      CYCLES = receivedCycles;
+      }
+    }
+  }
+  // SD.begin(BUILTIN_SDCARD);
+  // logFile = SD.open("test.txt", FILE_WRITE);
 }
 
 
@@ -59,7 +72,7 @@ void loop()
   {
     stepper.moveTo(POS_1);
     stepper.setSpeed(SPEED);
-    uint32_t time=millis();
+    uint64_t time=millis();
     while(millis()-time<1000){
       report();
     }
@@ -67,7 +80,7 @@ void loop()
   {
     stepper.moveTo(POS_0);
     stepper.setSpeed(SPEED);
-    uint32_t time=millis();
+    uint64_t time=millis();
     // Serial.flush();
     while(millis()-time<1000){
       report();
@@ -117,8 +130,8 @@ void report()
     // Serial.print(" V: ");
     // Serial.println(sum/count);
     // Serial.println("C: "+String(cycle)+" P: "+String(stepper.currentPosition())+" V: "+String(sum/count));
-    // Serial.println(String(cycle)+":"+String(stepper.currentPosition())+":"+String(sum/count));
-    logFile.println(String(cycle)+":"+String(stepper.currentPosition())+":"+String(sum/count));
+    Serial.println(String(cycle)+":"+String(stepper.currentPosition())+":"+String(sum/count));
+    // logFile.println(String(cycle)+":"+String(stepper.currentPosition())+":"+String(sum/count));
     sum = 0;
     count = 0;
   }
