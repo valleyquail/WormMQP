@@ -8,7 +8,7 @@ File logFile;
 #define SPEED 250
 
 #define POS_0 -400
-#define POS_1 400
+#define POS_1 0
 
 // #define CYCLES 5
 int CYCLES = 5;
@@ -27,8 +27,8 @@ long last = 0;
 long sum = 0;
 double count = 0;
 
-u_int64_t last_report = 0;
-#define REPORT_INTERVAL 150
+uint64_t last_report = 0;
+#define REPORT_INTERVAL 25
 
 void report();
 

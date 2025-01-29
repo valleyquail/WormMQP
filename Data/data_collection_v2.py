@@ -46,7 +46,7 @@ i = 0
 
 
 # Request cycles
-cycles = 100
+cycles = 10
 ser.write(f"cycles={cycles}\n".encode('utf-8'))
 
 
