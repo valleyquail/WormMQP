@@ -1,4 +1,5 @@
 import serial
+# from pyserial import serial
 import csv
 import time
 import pyperclip
@@ -35,9 +36,12 @@ ser.set_buffer_size(rx_size = 12800, tx_size = 12800)
 
 # Open the CSV file for writing
 timestamp = time.strftime('%m%d_%H%M%S')
-print(f"Data collection started. Saving data to data_{timestamp}.csv")
+label = "filmed"
+file_name = f'data_{label}_{timestamp}.csv'
+
+print(f"Data collection started. Saving data to {file_name}")
 # Data\raw_data\data_20250123_160441.csv
-csv_file = open(f'C:/Users/camca/WormMQP/Data/raw_data/data_{timestamp}.csv', 'w', newline='')
+csv_file = open(f'C:/Users/camca/WormMQP/Data/raw_data/{file_name}', 'w', newline='')
 csv_writer = csv.writer(csv_file)
 
 # Write the header to the CSV file
@@ -68,8 +72,8 @@ try:
         
 except serial.SerialException:
     print("Data collection stopped.")
-    print(f"Saving data to data_{timestamp}.csv")
-    pyperclip.copy(f'data_{timestamp}.csv')
+    print(f"Saving data to {file_name}")
+    pyperclip.copy(file_name)
     print("File path copied to clipboard.")
 
 finally:
