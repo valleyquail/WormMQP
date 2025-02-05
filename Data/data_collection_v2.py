@@ -32,16 +32,16 @@ baud_rate = 500000  # Replace with your baud rate
 # Open the serial port
 ser = serial.Serial(serial_port, baud_rate,timeout=1)
 # ser = Serial(port='COM1', baudrate=115200, timeout=1, writeTimeout=1)
-ser.set_buffer_size(rx_size = 12800, tx_size = 12800)
+# ser.set_buffer_size(rx_size = 12800, tx_size = 12800)
 
 # Open the CSV file for writing
 timestamp = time.strftime('%m%d_%H%M%S')
-label = "filmed"
+label = "sqr"
 file_name = f'data_{label}_{timestamp}.csv'
 
 print(f"Data collection started. Saving data to {file_name}")
 # Data\raw_data\data_20250123_160441.csv
-csv_file = open(f'C:/Users/camca/WormMQP/Data/raw_data/{file_name}', 'w', newline='')
+csv_file = open(f'./Data/raw_data/{file_name}', 'w', newline='')
 csv_writer = csv.writer(csv_file)
 
 # Write the header to the CSV file
@@ -50,7 +50,7 @@ i = 0
 
 
 # Request cycles
-cycles = 10
+cycles = 100
 ser.write(f"cycles={cycles}\n".encode('utf-8'))
 
 
