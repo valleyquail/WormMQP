@@ -1,8 +1,11 @@
+import copy
+
 import numpy as np
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
 from Nodes import Node, MidpointNode, VertexNode
 from SensorEdge import SensorEdge
+import itertools
 
 
 # Reference Papers:
@@ -22,6 +25,7 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     @:param major_sl: the length of the major_sl side
     @:param minor_sl: the length of the minor_sl side
     @:param num_sides: the number of sides of the unit cell
+    @param num_units: the number of unit cells to generate
     return: the coordinates of the vertices of the unit cell
    """
 
@@ -30,7 +34,7 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
         nodeEdgePairs = []
         for i in range(array.shape[0]):
             # If this is not the base of the unit, increment the level by one
-            if type == 'crease':
+            if type == 'midpoint':
                 node = MidpointNode(array[i, 0], array[i, 1], array[i, 2], heightIndex)
             else:
                 node = VertexNode(array[i, 0], array[i, 1], array[i, 2], heightIndex)
@@ -97,10 +101,10 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
 
     # C is the point located halfway between the two vertices on the major_sl side, let's call them A and B
     theta_ACB = np.arccos((h_unit * np.sqrt(2)) / (2 * minor_sl))
-    # The inset norm is the scalar distance from the midpoint of the major_sl side to the crease
+    # The inset norm is the scalar distance from the midpoint of the major_sl side to the midpoint
     inset_norm = np.sin(theta_ACB) * minor_sl / np.sqrt(2)
 
-    # Define the first points of the crease coordinates
+    # Define the first points of the midpoin coordinates
     # X position is the x position of the first vertex on the major_sl side minus the inset norm
     # Y position is the y position of the first vertex on the major_sl side minus half the minor_sl side length
     # Z position is the mid height
@@ -112,7 +116,7 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     for angle in angles:
         # Define basic rotation matrix
         rotation = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
-        # Rotate the first point of the crease
+        # Rotate the first point of the midpoint
         inset_pos.append(np.dot(rotation, inset_pos_one))
         inset_neg.append(np.dot(rotation, inset_neg_one))
 
@@ -123,24 +127,24 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     insets_neg = np.array(inset_neg).reshape(num_sides, 2)
     insets_neg = np.hstack((insets_neg, mid_heights.reshape(num_sides, 1)))
 
-    creases = np.vstack((insets_pos, insets_neg))
+    midpoints = np.vstack((insets_pos, insets_neg))
 
-    creaseNodes, creaseEdges = parseArrayToNodes(creases, height_index, major_sl - minor_sl, 'crease')
-    nodeEdges += creaseEdges
+    midpointNodes, midpointEdges = parseArrayToNodes(midpoints, height_index, major_sl - minor_sl, 'midpoint')
+    nodeEdges += midpointEdges
 
-    # Add the creases as neighbours to the vertices
+    # Add the midpoints as neighbours to the vertices
     vertexNodes = baseNodes + topNodes
     for vertex in vertexNodes:
-        for crease in creaseNodes:
-            dist = norm(np.array(vertex.getPosition()) - np.array(crease.getPosition()))
+        for midpoint in midpointNodes:
+            dist = norm(np.array(vertex.getPosition()) - np.array(midpoint.getPosition()))
             if dist < minor_sl * 1.1:
-                nodeEdges += [(vertex, crease)]
+                nodeEdges += [(vertex, midpoint)]
 
-    return baseNodes, topNodes, creaseNodes, nodeEdges, sensorEdges
+    return baseNodes, topNodes, midpointNodes, nodeEdges, sensorEdges
 
 
 class Arm():
-    def __init__(self, beta: float, major_sl: float, minor_sl: float, numSides: int, numUnits: int):
+    def __init__(self, beta: float, major_sl: float, minor_sl: float, num_sides: int, num_units: int):
         # Sorts the vertices and corners into an organized dictionary based on the height index of the node
 
         def organizeByLayer(nodes: list[Node]) -> dict[int, list[MidpointNode]]:
@@ -152,38 +156,38 @@ class Arm():
             :return: a dictionary that maps the height index into a list of nodes at that index
             """
             organizedData = dict()
-            for nodes in nodes:
-                height_idx = nodes.getLevel()
+            for node in nodes:
+                height_idx = node.getLevel()
                 if height_idx not in organizedData:
                     organizedData[height_idx] = []
-                    organizedData[height_idx].append(nodes)
+                organizedData[height_idx].append(nodes)
             return organizedData
 
-        def assignSensorIds(sensorEdges: list[SensorEdge]) -> dict[int, SensorEdge]:
+        def assignSensorIds(sensor_edges: list[SensorEdge]) -> dict[int, SensorEdge]:
             """
-            Organize the edges into crease and vertex edges
+            Organize the edges into midpoint and vertex edges
             @:param edges: the edges to be organized
-            @:return: a tuple containing the crease edges and the vertex edges
+            @:return: a tuple containing the midpoint edges and the vertex edges
             """
             sensors = {}
-            for i, edge in enumerate(sensorEdges):
+            for i, edge in enumerate(sensor_edges):
                 edge.setSensorID(i)
                 sensors[i] = edge
             return sensors
 
-        # List of creases
-        _creases: list[MidpointNode] = []
+        # List of midpoints
+        midpoint: list[MidpointNode] = []
         _vertices: list[VertexNode] = []
         _edgePairs: list[tuple[Node, Node]] = []
         _sensor_edges: list[SensorEdge] = []
-        # Array used to be fed back the the generate_unit function to make
+        # Array used to be fed back to the generate_unit function to make
         # the next unit's base it the top of the previous unit
         tNodes = None
         # Create and stack all the units into the organized data
-        for i in range(numUnits):
-            bNodes, tNodes, cNodes, edges, sensors = generate_unit(beta, major_sl, minor_sl, numSides, numUnits, i,
+        for i in range(num_units):
+            bNodes, tNodes, cNodes, edges, sensors = generate_unit(beta, major_sl, minor_sl, num_sides, num_units, i,
                                                                    tNodes)
-            _creases += cNodes
+            midpoint += cNodes
             _vertices += bNodes
             _edgePairs += edges
             _sensor_edges += sensors
@@ -193,46 +197,55 @@ class Arm():
         for i, node in enumerate(_vertices):
             node.id = i
 
-        # Assign ids to each crease node
-        for i, node in enumerate(_creases):
+        # Assign ids to each midpoint node
+        for i, node in enumerate(midpoint):
             node.id = i + len(_vertices)
 
         self.vertices = _vertices
-        self.creases = _creases
+        self.midpoint = midpoint
         self.edges = _edgePairs
-        self.organized: dict[int, list[MidpointNode]] = organizeByLayer(_creases + _vertices)
-        self.edges: list[tuple[MidpointNode, MidpointNode]] = _edgePairs
+        self.arm_dict: dict[int, list[Node]] = organizeByLayer(midpoint + _vertices)
+        self._default_pose = copy.deepcopy(self.arm_dict)
+        self.edges: list[tuple[Node, MidpointNode]] = _edgePairs
         self.sensorEdges: dict[int, SensorEdge] = assignSensorIds(_sensor_edges)
-        self.beta: float = beta
-        self.major_sl: float = major_sl
-        self.minor_sl: float = minor_sl
-        self.num_sides: int = numSides
-        self.num_units: int = numUnits
+
+        self._beta: float = beta
+        self._major_sl: float = major_sl
+        self._minor_sl: float = minor_sl
+        self._num_sides: int = num_sides
+        self._num_units: int = num_units
+
+
+    def resetPose(self) -> None:
+        self.arm_dict = copy.deepcopy(self._default_pose)
+
+
+    def forwardKinematics(self, theta: float) -> None:
 
     def drawArm(self) -> None:
         def extractPoints() -> (np.ndarray, np.ndarray):
-            vertexPoints = []
-            creasePoints = []
-            nodes = self.vertices + self.creases
-            for node in nodes:
-                if node.getType() == 'crease':
-                    creasePoints.append(node.getPosition())
+            vertex_points = []
+            midpoint_points = []
+            nodes = list(itertools.chain.from_iterable(self.arm_dict.values()))
+            for n in nodes:
+                if n.getType() == 'midpoint':
+                    midpoint_points.append(n.getPosition())
                 else:
-                    vertexPoints.append(node.getPosition())
-            creases = np.reshape(creasePoints, (-1, 3))
-            vertices = np.reshape(vertexPoints, (-1, 3))
-            return vertices, creases
+                    vertex_points.append(n.getPosition())
+            midpoints = np.reshape(midpoint_points, (-1, 3))
+            vertices = np.reshape(vertex_points, (-1, 3))
+            return vertices, midpoints
 
-        vertices, creases = extractPoints()
+        vertices, midpoints = extractPoints()
 
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
         ax.scatter(vertices[:, 0],
                    vertices[:, 1],
                    vertices[:, 2], c="b", s=50)
-        ax.scatter(creases[:, 0],
-                   creases[:, 1],
-                   creases[:, 2], c="g", s=50)
+        ax.scatter(midpoints[:, 0],
+                   midpoints[:, 1],
+                   midpoints[:, 2], c="g", s=50)
 
         for node, neighbour in self.edges:
             nodePos = node.getPosition()
@@ -257,6 +270,6 @@ class Arm():
 
 
 if __name__ == '__main__':
-    arm = Arm(0.6, 60, 28, 4, 5)
+    arm = Arm(.35, 60, 40, 4, 5)
     arm.drawArm()
     pass
