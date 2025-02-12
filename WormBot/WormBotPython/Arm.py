@@ -99,12 +99,14 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     else:
         topNodes, sensorEdges = parseArrayToSensors(vertex_coords_top, height_index + 1, major_sl)
 
-    # C is the point located halfway between the two vertices on the major_sl side, let's call them A and B
-    theta_ACB = np.arccos((h_unit * np.sqrt(2)) / (2 * minor_sl))
-    # The inset norm is the scalar distance from the midpoint of the major_sl side to the midpoint
-    inset_norm = np.sin(theta_ACB) * minor_sl / np.sqrt(2)
+    # Define sigma as the side length of the rhombus portion of the pattern
+    sigma = (minor_sl/2) / np.cos(beta)
+    # C is the point located halfway between the top and bottom vertices on the major_sl side, let's call them A and B
+    theta_ACB = np.arccos(1 - h_unit ** 2 / (2 * sigma ** 2))
+    # The inset norm is the scalar distance from the line AB and C
+    inset_norm = np.sqrt(sigma ** 2 - h_unit ** 2 / 4)
 
-    # Define the first points of the midpoin coordinates
+    # Define the first points of the midpoint coordinates
     # X position is the x position of the first vertex on the major_sl side minus the inset norm
     # Y position is the y position of the first vertex on the major_sl side minus half the minor_sl side length
     # Z position is the mid height
@@ -215,18 +217,19 @@ class Arm():
         self._num_sides: int = num_sides
         self._num_units: int = num_units
 
-
+    # TODO: Rewrite this function to use the arm_dict to reassign the stuff in the edges and the sensorEdges
     def resetPose(self) -> None:
         self.arm_dict = copy.deepcopy(self._default_pose)
 
 
     def forwardKinematics(self, theta: float) -> None:
+        pass
 
     def drawArm(self) -> None:
         def extractPoints() -> (np.ndarray, np.ndarray):
             vertex_points = []
             midpoint_points = []
-            nodes = list(itertools.chain.from_iterable(self.arm_dict.values()))
+            nodes = list(itertools.chain.from_iterable(self.arm_dict.values()))[0]
             for n in nodes:
                 if n.getType() == 'midpoint':
                     midpoint_points.append(n.getPosition())
@@ -269,7 +272,8 @@ class Arm():
         plt.show()
 
 
+
 if __name__ == '__main__':
-    arm = Arm(.35, 60, 40, 4, 5)
+    arm = Arm(np.pi*35/180, 60, 40, 4, 1)
     arm.drawArm()
     pass
