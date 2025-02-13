@@ -3,6 +3,7 @@ import copy
 import numpy as np
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
+from matplotlib import cm
 from Nodes import Node, MidpointNode, VertexNode
 from SensorEdge import SensorEdge
 import itertools
@@ -159,45 +160,107 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     return baseNodes, topNodes, midpointNodes, nodeEdges, sensorEdges
 
 
+def organizeByLayer(nodes: list[Node]) -> dict[int, list[MidpointNode]]:
+    """
+     Organize the nodes into a dictionary based on their height index
+     Makes it very convenient for iterating through the nodes in a layer by layer
+     fashion and applying transformations
+
+     Also assigns the id to each node
+    :param nodes:
+    :return: a dictionary that maps the height index into a list of nodes at that index
+    """
+    organizedData = dict()
+    curr_id = 0
+    for node in nodes:
+        height_idx = node.getLevel()
+        if height_idx not in organizedData:
+            organizedData[height_idx] = []
+        node.id = curr_id
+        organizedData[height_idx].append(nodes)
+        curr_id += 1
+    return organizedData
+
+
+def assignSensorIds(sensor_edges: list[SensorEdge]) -> dict[int, SensorEdge]:
+    """
+    Organize the edges into midpoint and vertex edges
+    @:param edges: the edges to be organized
+    @:return: a dict containing the midpoint edges and the vertex edges
+    """
+    sensors = {}
+    for i, edge in enumerate(sensor_edges):
+        edge.setSensorID(i)
+        sensors[i] = edge
+    return sensors
+
+def generateFaces(nodes: list[Node], edges: list[tuple[Node, Node]]) -> list[tuple[Node]]:
+    """
+    Generate the faces of the arm
+    :param nodes: the nodes of the arm
+    :param edges: the edges of the arm
+    :return: a list of tuples containing the nodes of the face
+    """
+    faces = []
+    starting = [edge[0] for edge in edges]
+    for node in starting:
+        corners = recurse_edges(edges, node, 0, [node], node)
+        # Check for a planar face and then skip it
+        check = [node.getPosition()[2] for node in corners]
+        if sum(check) == 4 * check[0]:
+            continue
+        if corners is not None:
+            faces.append(tuple(corners))
+    reversed(edges)
+    reversed(starting)
+    for node in starting:
+        corners = recurse_edges(edges, node, 0, [node], node)
+        # Check for a planar face and then skip it
+        check = [node.getPosition()[2] for node in corners]
+        if sum(check) == 4 * check[0]:
+            continue
+        if corners is not None:
+            faces.append(tuple(corners))
+    faces = set(faces)
+
+    print("finished")
+    return faces
+
+def recurse_edges(edges: list[tuple[Node, Node]], node: Node, path_length: int, corners: list[Node], target: Node):
+    """
+    Recursively find the corners of the face
+    :param edges: the edges of the arm
+    :param node: the current node
+    :param path_length: the length of the current path
+    :param corners: list of corners of the face
+    :param target: the node to find
+    :return:
+    """
+    if path_length == 4:
+        return None
+    for edge in edges:
+        if node in edge:
+            node = edge[0] if edge[0] != node else edge[1]
+            if node == target:
+                return corners
+            corners.append(node)
+            edges.remove(edge)
+            out = recurse_edges(edges, node, path_length + 1, corners, target)
+            edges.append(edge)
+            if out is not None:
+                return out
+            # Reset the node to the previous node in the edge since that path was not viable
+            node = edge[0] if edge[0] != node else edge[1]
+            corners.pop()
+
+    return None
+
+
 class Arm():
     def __init__(self, beta: float, major_sl: float, minor_sl: float, num_sides: int, num_units: int):
-        # Sorts the vertices and corners into an organized dictionary based on the height index of the node
-
-        def organizeByLayer(nodes: list[Node]) -> dict[int, list[MidpointNode]]:
-            """
-             Organize the nodes into a dictionary based on their height index
-             Makes it very convenient for iterating through the nodes in a layer by layer
-             fashion and applying transformations
-
-             Also assigns the id to each node
-            :param nodes:
-            :return: a dictionary that maps the height index into a list of nodes at that index
-            """
-            organizedData = dict()
-            curr_id = 0
-            for node in nodes:
-                height_idx = node.getLevel()
-                if height_idx not in organizedData:
-                    organizedData[height_idx] = []
-                node.id = curr_id
-                organizedData[height_idx].append(nodes)
-                curr_id += 1
-            return organizedData
-
-        def assignSensorIds(sensor_edges: list[SensorEdge]) -> dict[int, SensorEdge]:
-            """
-            Organize the edges into midpoint and vertex edges
-            @:param edges: the edges to be organized
-            @:return: a tuple containing the midpoint edges and the vertex edges
-            """
-            sensors = {}
-            for i, edge in enumerate(sensor_edges):
-                edge.setSensorID(i)
-                sensors[i] = edge
-            return sensors
 
         # List of midpoints
-        midpoint: list[MidpointNode] = []
+        _midpoints: list[MidpointNode] = []
         _vertices: list[VertexNode] = []
         _edgePairs: list[tuple[Node, Node]] = []
         _sensor_edges: list[SensorEdge] = []
@@ -208,7 +271,7 @@ class Arm():
         for i in range(num_units):
             bNodes, tNodes, cNodes, edges, sensors = generate_unit(beta, major_sl, minor_sl, num_sides, num_units, i,
                                                                    tNodes)
-            midpoint += cNodes
+            _midpoints += cNodes
             _vertices += bNodes
             _edgePairs += edges
             _sensor_edges += sensors
@@ -219,16 +282,17 @@ class Arm():
             node.id = i
 
         # Assign ids to each midpoint node
-        for i, node in enumerate(midpoint):
+        for i, node in enumerate(_midpoints):
             node.id = i + len(_vertices)
 
-        self.vertices = _vertices
-        self.midpoint = midpoint
+        self._vertices = _vertices
+        self._midpoints = _midpoints
         self.edges = _edgePairs
-        self.arm_dict: dict[int, list[Node]] = organizeByLayer(midpoint + _vertices)
+        self.arm_dict: dict[int, list[Node]] = organizeByLayer(_midpoints + _vertices)
         self._default_pose = copy.deepcopy(self.arm_dict)
         self.edges: list[tuple[Node, MidpointNode]] = _edgePairs
         self.sensorEdges: dict[int, SensorEdge] = assignSensorIds(_sensor_edges)
+        self.faces: list[list[Node]] = generateFaces(_midpoints + _vertices, _edgePairs)
 
         self._beta: float = beta
         self._major_sl: float = major_sl
@@ -280,13 +344,22 @@ class Arm():
             neighbourPos = neighbour.getPosition()
             ax.plot([nodePos[0], neighbourPos[0]],
                     [nodePos[1], neighbourPos[1]],
-                    [nodePos[2], neighbourPos[2]], c="k")
+                    [nodePos[2], neighbourPos[2]], c="k", lw=10)
 
         for sensorEdge in self.sensorEdges.values():
             node1Pos, node2Pos = sensorEdge.getEndPoints()
             ax.plot([node1Pos[0], node2Pos[0]],
                     [node1Pos[1], node2Pos[1]],
-                    [node1Pos[2], node2Pos[2]], c="r")
+                    [node1Pos[2], node2Pos[2]], c="r", lw=10)
+
+        for shape in self.faces:
+
+            data = np.array([node.getPosition() for node in shape]).reshape(-1, 3)
+            x = data[:, 0]
+            y = data[:, 1]
+            z = data[:, 2]
+            ax.plot_trisurf(x, y, z, alpha=.5, cmap=cm.Blues)
+
 
         ax.set_xlim(-100, 100)
         ax.set_ylim(-100, 100)
