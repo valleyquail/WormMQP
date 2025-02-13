@@ -15,6 +15,9 @@ import itertools
 # Title: Rigid-flexible coupled origami robots via multimaterial 3D printing
 # DOI: 10.1088/1361-665X/ad212c
 
+# Title: Energy absorption of thin-walled tubes with pre-folded
+# origami patterns: Numerical simulation and experimental verification
+# DOI: https://doi.org/10.1016/j.tws.2016.02.007
 
 def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0, prev_top_nodes=None):
     """ Generate a unit cell
@@ -29,22 +32,22 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     return: the coordinates of the vertices of the unit cell
    """
 
-    def parseArrayToNodes(array: np.ndarray, heightIndex: int, euclidianRange: float, type: str):
+    def parseArrayToNodes(array: np.ndarray, height_index: int, euclidian_range: float, type: str):
         nodes = []
         nodeEdgePairs = []
         for i in range(array.shape[0]):
-            # If this is not the base of the unit, increment the level by one
             if type == 'midpoint':
-                node = MidpointNode(array[i, 0], array[i, 1], array[i, 2], heightIndex)
+                node = MidpointNode(array[i, 0], array[i, 1], array[i, 2], height_index)
             else:
-                node = VertexNode(array[i, 0], array[i, 1], array[i, 2], heightIndex)
+                node = VertexNode(array[i, 0], array[i, 1], array[i, 2], height_index)
             nodes.append(node)
         # Add the other base nodes as neighbours
         for i, node in enumerate(nodes):
             for other_node in nodes[i:]:
                 if node.getPosition() != other_node.getPosition():
                     dist = norm(np.array(node.getPosition()) - np.array(other_node.getPosition()))
-                    if dist < euclidianRange * 1.1:
+
+                    if dist < euclidian_range * 1.01:
                         nodeEdgePairs.append((node, other_node))
         return nodes, nodeEdgePairs
 
@@ -67,11 +70,21 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
 
     nodeEdges = []
     sensorEdges = []
-    # Total height of a unit
-    h_unit = minor_sl / 2 * np.tan(beta)
+
+    # Total height of a unit when unfolded
+    h_flat = 2 * (minor_sl / 2) * np.tan(beta)
+    # C is the point located halfway between the top and bottom vertices on the major_sl side, let's call them A and B
+    # Calculate the one half the dihedral angle ACB
+    dihedral = np.arccos((minor_sl / h_flat) * np.tan(np.pi / (2 * num_sides)))
+
+    # The height of a unit when folded
+    h_unit = h_flat * np.sin(dihedral)
     # Offset the base height by the height index
     base_height = height_index * h_unit
     mid_h = h_unit / 2
+
+    # The inset norm is the scalar distance from the line AB and C
+    inset_norm = h_flat / 2 * np.cos(dihedral)
 
     # The radius of the circumscribed circle of the polygon
     startingRadius = major_sl / (2 * np.sin(np.pi / num_sides))
@@ -99,13 +112,6 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     else:
         topNodes, sensorEdges = parseArrayToSensors(vertex_coords_top, height_index + 1, major_sl)
 
-    # Define sigma as the side length of the rhombus portion of the pattern
-    sigma = (minor_sl/2) / np.cos(beta)
-    # C is the point located halfway between the top and bottom vertices on the major_sl side, let's call them A and B
-    theta_ACB = np.arccos(1 - h_unit ** 2 / (2 * sigma ** 2))
-    # The inset norm is the scalar distance from the line AB and C
-    inset_norm = np.sqrt(sigma ** 2 - h_unit ** 2 / 4)
-
     # Define the first points of the midpoint coordinates
     # X position is the x position of the first vertex on the major_sl side minus the inset norm
     # Y position is the y position of the first vertex on the major_sl side minus half the minor_sl side length
@@ -131,15 +137,23 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
 
     midpoints = np.vstack((insets_pos, insets_neg))
 
-    midpointNodes, midpointEdges = parseArrayToNodes(midpoints, height_index, major_sl - minor_sl, 'midpoint')
+
+
+    midpointNodes, midpointEdges = parseArrayToNodes(midpoints, height_index, minor_sl, 'midpoint')
     nodeEdges += midpointEdges
+
+    # The midpoint limiting distance is the sidelength of one of the diamonds in the pattern
+    # This is used to prevent the drawing of extra lines between the midpoints
+    midpoint_to_vertex_dist = (minor_sl / 2) / np.cos(beta)
 
     # Add the midpoints as neighbours to the vertices
     vertexNodes = baseNodes + topNodes
     for vertex in vertexNodes:
         for midpoint in midpointNodes:
             dist = norm(np.array(vertex.getPosition()) - np.array(midpoint.getPosition()))
-            if dist < minor_sl * 1.1:
+            # Midpoint limiter helps parse the edges between the vertices
+            # and the midpoints to prevent extra lines from being drawn
+            if  dist < midpoint_to_vertex_dist * 1.1:
                 nodeEdges += [(vertex, midpoint)]
 
     return baseNodes, topNodes, midpointNodes, nodeEdges, sensorEdges
@@ -154,15 +168,20 @@ class Arm():
              Organize the nodes into a dictionary based on their height index
              Makes it very convenient for iterating through the nodes in a layer by layer
              fashion and applying transformations
+
+             Also assigns the id to each node
             :param nodes:
             :return: a dictionary that maps the height index into a list of nodes at that index
             """
             organizedData = dict()
+            curr_id = 0
             for node in nodes:
                 height_idx = node.getLevel()
                 if height_idx not in organizedData:
                     organizedData[height_idx] = []
+                node.id = curr_id
                 organizedData[height_idx].append(nodes)
+                curr_id += 1
             return organizedData
 
         def assignSensorIds(sensor_edges: list[SensorEdge]) -> dict[int, SensorEdge]:
@@ -219,8 +238,14 @@ class Arm():
 
     # TODO: Rewrite this function to use the arm_dict to reassign the stuff in the edges and the sensorEdges
     def resetPose(self) -> None:
-        self.arm_dict = copy.deepcopy(self._default_pose)
-
+        def sort_key(node: Node):
+            return node.get_id()
+        default_nodes = list(itertools.chain.from_iterable(self._default_pose.values()))[0]
+        default_nodes = sorted(default_nodes, key=sort_key)
+        nodes = list(itertools.chain.from_iterable(self.arm_dict.values()))[0]
+        nodes = sorted(nodes, key=sort_key)
+        for i in range(len(nodes)):
+            nodes[i].set_position(default_nodes[i].getPosition())
 
     def forwardKinematics(self, theta: float) -> None:
         pass
@@ -272,8 +297,7 @@ class Arm():
         plt.show()
 
 
-
 if __name__ == '__main__':
-    arm = Arm(np.pi*35/180, 60, 40, 4, 1)
+    arm = Arm(np.pi * 35 / 180, 60, 40, 4, 1)
     arm.drawArm()
     pass
