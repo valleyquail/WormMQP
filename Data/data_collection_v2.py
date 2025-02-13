@@ -36,7 +36,7 @@ ser = serial.Serial(serial_port, baud_rate,timeout=1)
 
 # Open the CSV file for writing
 timestamp = time.strftime('%m%d_%H%M%S')
-label = "sqr"
+label = str(input("Enter a label for the data: "))
 file_name = f'data_{label}_{timestamp}.csv'
 
 print(f"Data collection started. Saving data to {file_name}")

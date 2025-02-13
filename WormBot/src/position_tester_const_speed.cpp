@@ -5,13 +5,13 @@
 
 File logFile;
 
-#define SPEED 250
+#define SPEED 200
 
 #define POS_0 -400
 #define POS_1 0
 
 // #define CYCLES 5
-int CYCLES = 5;
+int CYCLES = 100;
 
 // Define pin connections & motor's steps per revolution
 const int dirPin = 2;
@@ -60,7 +60,7 @@ void setup()
     }
   }
   // SD.begin(BUILTIN_SDCARD);
-  // logFile = SD.open("test.txt", FILE_WRITE);
+  // logFile = SD.open("long_test.txt", FILE_WRITE);
 }
 
 
@@ -101,7 +101,7 @@ void loop()
         }
       }
       // reboot
-      logFile.close();
+      // logFile.close();
       SRC_GPR5 = 0x0BAD00F1;
       SCB_AIRCR = 0x05FA0004;
       while (1) ;
