@@ -41,3 +41,7 @@ EmailPics/*
 WormBot/WormBotPython/.idea/*
 WormBot/WormBotPython/__pycache__/*
 WormBot/.vscode/*
+
+*.stl
+*.bgcode
+*.gcode
