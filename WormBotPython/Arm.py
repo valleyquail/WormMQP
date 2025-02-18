@@ -291,7 +291,8 @@ class Arm():
         self._default_pose = copy.deepcopy(self.arm_dict)
         self.edges: list[tuple[Node, MidpointNode]] = _edgePairs
         self.sensorEdges: dict[int, SensorEdge] = assignSensorIds(_sensor_edges)
-        self.faces: list[list[Node]] = generateFaces(_midpoints + _vertices, _edgePairs)
+        self.faces: list[tuple[Node]] = generateFaces(_midpoints + _vertices, _edgePairs)
+        print(f"faces: {self.faces}")
 
         self._beta: float = beta
         self._major_sl: float = major_sl
@@ -300,12 +301,20 @@ class Arm():
         self._num_units: int = num_units
 
         self.use_blender: bool = use_blender
-        self.shared_memory: shm.ShareableList = None
+        self.shared_memory: shm.SharedMemory = None
         if self.use_blender:
-            numpy_faces = np.asarray(self.faces)
+            print(len(self.faces))
+            
+            numpy_faces = np.ndarray((len(self.faces),),dtype=object)
+            for i, item in enumerate(self.faces):
+                numpy_faces[i] = item
+            print(numpy_faces)
             try:
                 self.shared_memory = shm.SharedMemory(name='arm_data', create=True, size=numpy_faces.nbytes)
                 print("Created memory")
+                print(numpy_faces.shape)
+                print(numpy_faces.dtype)
+                print(numpy_faces[0])
             except FileExistsError:
                 self.shared_memory = shm.SharedMemory(name='arm_data')
                 self.shared_memory.close()
@@ -401,3 +410,4 @@ if __name__ == '__main__':
     arm = Arm(np.pi * 35 / 180, 60, 40, 4, 1,use_blender=True)
     arm.drawArm()
     pass
+
