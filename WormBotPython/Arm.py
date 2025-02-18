@@ -7,6 +7,7 @@ from matplotlib import cm
 from Nodes import Node, MidpointNode, VertexNode
 from SensorEdge import SensorEdge
 import itertools
+from multiprocessing import shared_memory as shm
 
 
 # Reference Papers:
@@ -159,7 +160,6 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
 
     return baseNodes, topNodes, midpointNodes, nodeEdges, sensorEdges
 
-
 def organizeByLayer(nodes: list[Node]) -> dict[int, list[MidpointNode]]:
     """
      Organize the nodes into a dictionary based on their height index
@@ -180,7 +180,6 @@ def organizeByLayer(nodes: list[Node]) -> dict[int, list[MidpointNode]]:
         organizedData[height_idx].append(nodes)
         curr_id += 1
     return organizedData
-
 
 def assignSensorIds(sensor_edges: list[SensorEdge]) -> dict[int, SensorEdge]:
     """
@@ -257,7 +256,7 @@ def recurse_edges(edges: list[tuple[Node, Node]], node: Node, path_length: int, 
 
 
 class Arm():
-    def __init__(self, beta: float, major_sl: float, minor_sl: float, num_sides: int, num_units: int):
+    def __init__(self, beta: float, major_sl: float, minor_sl: float, num_sides: int, num_units: int, use_blender: bool = False):
 
         # List of midpoints
         _midpoints: list[MidpointNode] = []
@@ -299,6 +298,28 @@ class Arm():
         self._minor_sl: float = minor_sl
         self._num_sides: int = num_sides
         self._num_units: int = num_units
+
+        self.use_blender: bool = use_blender
+        self.shared_memory: shm.ShareableList = None
+        if self.use_blender:
+            numpy_faces = np.asarray(self.faces)
+            try:
+                self.shared_memory = shm.SharedMemory(name='arm_data', create=True, size=numpy_faces.nbytes)
+                print("Created memory")
+            except FileExistsError:
+                self.shared_memory = shm.SharedMemory(name='arm_data')
+                self.shared_memory.close()
+                self.shared_memory.unlink()
+                self.shared_memory = shm.SharedMemory(name='arm_data', create=True, size=numpy_faces.nbytes)
+                print("Deleted and recreated memory")
+
+            tmp = input("enter to continue")
+            self.shared_memory.close()
+            self.shared_memory.unlink()
+            quit()
+
+
+        self.arm_data: any = None # TODO: proper type
 
     # TODO: Rewrite this function to use the arm_dict to reassign the stuff in the edges and the sensorEdges
     def resetPose(self) -> None:
@@ -369,8 +390,14 @@ class Arm():
         ax.set_zlabel('Z')
         plt.show()
 
+    # def renderArm(self) -> None:
+        if not self.use_blender:
+            pass
+        
+        
+        pass
 
 if __name__ == '__main__':
-    arm = Arm(np.pi * 35 / 180, 60, 40, 4, 1)
+    arm = Arm(np.pi * 35 / 180, 60, 40, 4, 1,use_blender=True)
     arm.drawArm()
     pass
