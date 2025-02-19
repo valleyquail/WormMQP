@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Nodes import MidpointNode
+import Arm
 
 ###################################
 ###### Model Parameters ###########
@@ -22,9 +22,5 @@ num_sides = 4
 num_units = 5
 
 
-
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     pass

@@ -32,9 +32,9 @@ class Node:
         self.y = y
         self.z = z
 
-    @dispatch(tuple[float, float, float])
-    def set_position(self, pos: tuple[float, float, float]) -> None:
-        self.x, self.y, self.z = pos[0]
+    # @dispatch(tuple[float, float, float])
+    # def set_position(self, pos: tuple[float, float, float]) -> None:
+    #     self.x, self.y, self.z = pos[0]
 
     def __str__(self):
         return f"Node id {self.id}, level {self.level}, type {self.type})"
