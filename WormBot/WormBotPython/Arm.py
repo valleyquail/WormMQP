@@ -154,6 +154,11 @@ def assignSensorIds(sensor_edges: list[SensorEdge]) -> dict[int, SensorEdge]:
 
 
 def forward_kinematics(vertices: list[Node], theta: float, side: str = 'right') -> None:
+    """
+    Applies forward kinematics transformation with a truly fixed base.
+    The base nodes (level 0) will remain completely unchanged while the rest
+    of the structure bends smoothly above them.
+    """
 
     def get_level_nodes(nodes: list[Node]) -> dict[int, list[Node]]:
         levels = {}
@@ -168,31 +173,25 @@ def forward_kinematics(vertices: list[Node], theta: float, side: str = 'right') 
         positions = [np.array(node.getPosition()) for node in nodes]
         return np.mean(positions, axis=0)
 
-    def create_backbone_curve(base_center: np.ndarray, height: float, theta: float) -> callable:
-
-        def curve(h: float) -> np.ndarray:
-            t = h / height  # Normalized height
-            x = base_center[0] + height * np.sin(theta * t) * t
-            y = base_center[1]
-            z = h * np.cos(theta * t)
-            return np.array([x, y, z])
-
-        return curve
-
     def transform_cross_section(nodes: list[Node], center: np.ndarray,
                                 new_center: np.ndarray, theta: float, t: float) -> None:
+
+        smooth_t = t * t * (3 - 2 * t)
         rotation = np.array([
-            [np.cos(theta * t), 0, -np.sin(theta * t)],
+            [np.cos(theta * smooth_t), 0, -np.sin(theta * smooth_t)],
             [0, 1, 0],
-            [np.sin(theta * t), 0, np.cos(theta * t)]
+            [np.sin(theta * smooth_t), 0, np.cos(theta * smooth_t)]
         ])
 
         for node in nodes:
+            # Skip transformation if this is a vertex node at level 0
+            if node.getType() == 'vertex' and node.getLevel() == 0:
+                continue
             pos = np.array(node.getPosition())
             relative_pos = pos - center
-
             new_pos = rotation @ relative_pos + new_center
             node.set_position(tuple(new_pos))
+
 
     level_groups = get_level_nodes(vertices)
     if not level_groups:
@@ -200,22 +199,27 @@ def forward_kinematics(vertices: list[Node], theta: float, side: str = 'right') 
 
     base_nodes = level_groups[0]
     base_center = get_level_center(base_nodes)
-    max_height = max(node.getPosition()[2] for node in vertices)
+    max_height = max(node.getPosition()[2] for node in vertices) - base_center[2]
 
-    backbone = create_backbone_curve(base_center, max_height, theta)
 
     for level, nodes in level_groups.items():
+
         if level == 0:
             continue
 
         current_center = get_level_center(nodes)
-        current_height = current_center[2]
-        t = current_height / max_height
+        current_height = current_center[2] - base_center[2]
+        t = current_height / max_height if max_height > 0 else 0
 
-        new_center = backbone(current_height)
+
+        x_offset = max_height * np.sin(theta * t) * t
+        new_center = np.array([
+            base_center[0] + x_offset,
+            current_center[1],
+            current_center[2]
+        ])
 
         transform_cross_section(nodes, current_center, new_center, theta, t)
-
 
 def asymmetric_forward_kinematics(vertices: list[Node], theta: float, side: str = 'right') -> None:
 
@@ -343,6 +347,9 @@ def trapezoid_interface_kinematics(vertices: list[Node], midpoints: list[Node], 
 
 
     for node in other_nodes:
+        if node.getType() == 'vertex' and node.getLevel() == 0:
+            continue
+
         if node.z > center_z:
             new_pos = rotate_point(node.x, node.y, node.z,
                                    center_x, center_y, center_z,
@@ -480,7 +487,6 @@ class Arm():
 if __name__ == '__main__':
     # Create arm with default parameters
     arm = Arm(np.pi * 35 / 180, 60, 40, 4, 2)
-
     # Set interface angle and visualize
     arm.setInterfaceAngle(np.pi / 9)
 
