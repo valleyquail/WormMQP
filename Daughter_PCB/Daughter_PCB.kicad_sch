@@ -4221,12 +4221,6 @@
 		(uuid "36da5e2c-2877-4b2f-a29c-5e82a6fd6c6b")
 	)
 	(junction
-		(at 124.46 137.16)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "6fcebd22-5e01-4c4a-b8a9-ecbffbae1cde")
-	)
-	(junction
 		(at 106.68 34.29)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4428,7 +4422,7 @@
 	)
 	(wire
 		(pts
-			(xy 124.46 104.14) (xy 124.46 137.16)
+			(xy 124.46 104.14) (xy 124.46 139.7)
 		)
 		(stroke
 			(width 0)
@@ -5128,7 +5122,7 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 137.16) (xy 124.46 137.16)
+			(xy 97.79 137.16) (xy 109.22 137.16)
 		)
 		(stroke
 			(width 0)
@@ -5395,16 +5389,6 @@
 			(type default)
 		)
 		(uuid "f7e54853-fc5b-4310-9779-29293b4e0a26")
-	)
-	(wire
-		(pts
-			(xy 124.46 137.16) (xy 124.46 139.7)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f7ee9bf5-688e-42e8-84f4-9887356d4aa9")
 	)
 	(wire
 		(pts
@@ -5692,7 +5676,7 @@
 		(uuid "00024f65-2080-413b-9dee-eea3cb0da9d0")
 	)
 	(label "MUX_0"
-		(at 214.63 85.09 180)
+		(at 214.63 87.63 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5743,7 +5727,7 @@
 		(uuid "06a37025-6879-410a-bfe1-96ea901bd14d")
 	)
 	(label "MUX_0"
-		(at 214.63 59.69 180)
+		(at 214.63 62.23 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5805,7 +5789,7 @@
 		(uuid "1247e2bb-b184-4a0d-b85d-923c9ebcf15a")
 	)
 	(label "MUX_1"
-		(at 109.22 121.92 0)
+		(at 109.22 119.38 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5866,7 +5850,7 @@
 		(uuid "34535530-ff14-4c9b-9983-50a2acbf8704")
 	)
 	(label "MUX_1"
-		(at 214.63 62.23 180)
+		(at 214.63 59.69 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6021,7 +6005,7 @@
 		(uuid "54eac6d0-1e69-49e0-814f-ab5d9ca55934")
 	)
 	(label "MUX_1"
-		(at 214.63 36.83 180)
+		(at 214.63 34.29 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6490,7 +6474,7 @@
 		(uuid "b9f39ed4-523c-45ab-bb8c-7d1f653aee14")
 	)
 	(label "MUX_1"
-		(at 214.63 87.63 180)
+		(at 214.63 85.09 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6688,7 +6672,7 @@
 		(uuid "e6949502-dabe-4046-9129-f955ab7525b1")
 	)
 	(label "MUX_0"
-		(at 214.63 34.29 180)
+		(at 214.63 36.83 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6708,7 +6692,7 @@
 		(uuid "f0ccb4f5-1f68-4ccd-a775-775df7486823")
 	)
 	(label "MUX_0"
-		(at 109.22 119.38 0)
+		(at 109.22 121.92 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6728,7 +6712,7 @@
 		(uuid "f36fcfe5-d9f5-4a9c-90c9-5768f8ad4ad2")
 	)
 	(label "MUX_1"
-		(at 214.63 113.03 180)
+		(at 214.63 110.49 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6800,7 +6784,7 @@
 		(uuid "faa19ae2-6fba-4642-b48d-834471e65eda")
 	)
 	(label "MUX_0"
-		(at 214.63 110.49 180)
+		(at 214.63 113.03 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6815,7 +6799,7 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom no)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "08af8d84-bca9-4bf1-98d7-3c3ad7adb2c4")
@@ -6879,7 +6863,7 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom no)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "18619409-5851-4d56-ad98-ae3995411ae3")
@@ -6943,11 +6927,11 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "22b3c423-5d4d-466b-98fb-be72d9e6a150")
-		(property "Reference" "J10"
+		(property "Reference" "J11"
 			(at 166.37 120.6499 0)
 			(effects
 				(font
@@ -7029,7 +7013,7 @@
 		(instances
 			(project ""
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "J10")
+					(reference "J11")
 					(unit 1)
 				)
 			)
@@ -7042,7 +7026,7 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "26115597-d8a6-4864-8588-8fdea7f2a7ba")
@@ -7108,11 +7092,11 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "27f1863f-292d-42f1-9257-99bad3203326")
-		(property "Reference" "J8"
+		(property "Reference" "J7"
 			(at 187.96 80.0099 0)
 			(effects
 				(font
@@ -7169,7 +7153,7 @@
 		(instances
 			(project "SACRED_PCB"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "J8")
+					(reference "J7")
 					(unit 1)
 				)
 			)
@@ -7181,7 +7165,7 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3043706e-8d5c-4ddc-a8e8-9ebb415edfd6")
@@ -7253,7 +7237,7 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(uuid "3346a8a9-0592-40b1-8c0e-4ecf19fe630c")
 		(property "Reference" "J1"
@@ -7323,7 +7307,7 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "418aa14d-10fb-4deb-a9f0-94ea25cea826")
@@ -7402,11 +7386,11 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "44eadb65-1f71-4125-838a-8c8c3130f120")
-		(property "Reference" "J6"
+		(property "Reference" "J8"
 			(at 227.33 86.3599 0)
 			(effects
 				(font
@@ -7469,7 +7453,7 @@
 		(instances
 			(project "SACRED_PCB"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "J6")
+					(reference "J8")
 					(unit 1)
 				)
 			)
@@ -7481,11 +7465,11 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4efd3346-b9c8-44c0-a70f-777d446c4645")
-		(property "Reference" "#PWR027"
+		(property "Reference" "#PWR08"
 			(at 140.97 166.37 0)
 			(effects
 				(font
@@ -7535,7 +7519,7 @@
 		(instances
 			(project "SACRED_PCB"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "#PWR027")
+					(reference "#PWR08")
 					(unit 1)
 				)
 			)
@@ -7547,11 +7531,11 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6fbdf1e0-2e51-4d65-8614-14845db586ca")
-		(property "Reference" "#PWR030"
+		(property "Reference" "#PWR010"
 			(at 154.94 190.5 0)
 			(effects
 				(font
@@ -7601,7 +7585,7 @@
 		(instances
 			(project "SACRED_PCB"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "#PWR030")
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
@@ -7613,7 +7597,7 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "704872b4-4d6a-4b19-9fc3-ed3a8faff793")
@@ -7692,11 +7676,11 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7c6783f0-c674-41ac-b1ad-6bc2d37b3455")
-		(property "Reference" "J16"
+		(property "Reference" "J12"
 			(at 144.78 123.1899 0)
 			(effects
 				(font
@@ -7757,7 +7741,7 @@
 		(instances
 			(project ""
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "J16")
+					(reference "J12")
 					(unit 1)
 				)
 			)
@@ -7769,11 +7753,11 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7e4b971b-df6d-49fd-9e83-571ff9acd60d")
-		(property "Reference" "#PWR09"
+		(property "Reference" "#PWR06"
 			(at 16.51 107.95 0)
 			(effects
 				(font
@@ -7823,7 +7807,7 @@
 		(instances
 			(project "mqp2"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "#PWR09")
+					(reference "#PWR06")
 					(unit 1)
 				)
 			)
@@ -7835,11 +7819,11 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "88a065e5-eb59-4f30-98cc-e270c8d5d3a6")
-		(property "Reference" "#PWR028"
+		(property "Reference" "#PWR09"
 			(at 147.32 166.37 0)
 			(effects
 				(font
@@ -7889,7 +7873,7 @@
 		(instances
 			(project "SACRED_PCB"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "#PWR028")
+					(reference "#PWR09")
 					(unit 1)
 				)
 			)
@@ -7901,7 +7885,7 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom no)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "929b6423-bd4a-421b-b509-c308e12ae291")
@@ -8029,11 +8013,11 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "97783a6d-687a-4685-beb6-7ae39b65027c")
-		(property "Reference" "J11"
+		(property "Reference" "J10"
 			(at 185.42 116.8399 0)
 			(effects
 				(font
@@ -8121,7 +8105,7 @@
 		(instances
 			(project ""
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "J11")
+					(reference "J10")
 					(unit 1)
 				)
 			)
@@ -8133,7 +8117,7 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9d36d6af-8dcc-46ad-b465-e1d66cb043ca")
@@ -8293,7 +8277,7 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a5cd735c-5e51-47ea-9741-a57d982d67ab")
@@ -8366,11 +8350,11 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "bd514eed-dbea-445c-892a-20a1b7ca8de4")
-		(property "Reference" "#PWR05"
+		(property "Reference" "#PWR03"
 			(at 21.59 34.29 0)
 			(effects
 				(font
@@ -8420,7 +8404,7 @@
 		(instances
 			(project ""
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "#PWR05")
+					(reference "#PWR03")
 					(unit 1)
 				)
 			)
@@ -8432,7 +8416,7 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c3fd7eb7-8f26-4caf-ae6f-654a7a8e8933")
@@ -8511,11 +8495,11 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d1973318-2c60-4192-a6c7-dadbba6f85c0")
-		(property "Reference" "#PWR010"
+		(property "Reference" "#PWR07"
 			(at 124.46 146.05 0)
 			(effects
 				(font
@@ -8566,7 +8550,7 @@
 		(instances
 			(project "mqp2"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "#PWR010")
+					(reference "#PWR07")
 					(unit 1)
 				)
 			)
@@ -8578,11 +8562,11 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d4e4f798-3524-4dfe-9306-8985cddac1e2")
-		(property "Reference" "#PWR06"
+		(property "Reference" "#PWR04"
 			(at 21.59 41.91 0)
 			(effects
 				(font
@@ -8632,7 +8616,7 @@
 		(instances
 			(project ""
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "#PWR06")
+					(reference "#PWR04")
 					(unit 1)
 				)
 			)
@@ -8708,11 +8692,11 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d99b6517-9891-4863-9200-28a2a6f1b09a")
-		(property "Reference" "#PWR07"
+		(property "Reference" "#PWR05"
 			(at 92.71 57.15 0)
 			(effects
 				(font
@@ -8762,7 +8746,7 @@
 		(instances
 			(project "SACRED_PCB"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "#PWR07")
+					(reference "#PWR05")
 					(unit 1)
 				)
 			)
@@ -8774,7 +8758,7 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "dcb17b43-f4da-481b-8e45-8c2063c3f34b")
@@ -8840,7 +8824,7 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(uuid "df30d960-b16a-4959-a7ed-4156372b3af0")
 		(property "Reference" "C1"
@@ -8999,10 +8983,10 @@
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(uuid "e589edfa-5389-4058-ab67-5f1c1d5ea981")
-		(property "Reference" "J15"
+		(property "Reference" "J13"
 			(at 165.1 171.4499 0)
 			(effects
 				(font
@@ -9060,7 +9044,7 @@
 		(instances
 			(project "SACRED_PCB"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "J15")
+					(reference "J13")
 					(unit 1)
 				)
 			)
@@ -9072,11 +9056,11 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "eac231cf-82f0-445c-8bff-72de8c8b11ac")
-		(property "Reference" "U3"
+		(property "Reference" "U2"
 			(at 69.85 90.17 0)
 			(effects
 				(font
@@ -9323,7 +9307,7 @@
 		(instances
 			(project ""
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "U3")
+					(reference "U2")
 					(unit 1)
 				)
 			)
@@ -9335,11 +9319,11 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f11735d7-c31b-4129-b43c-7d895cf3ba45")
-		(property "Reference" "J7"
+		(property "Reference" "J5"
 			(at 187.96 68.5799 0)
 			(effects
 				(font
@@ -9396,7 +9380,7 @@
 		(instances
 			(project "SACRED_PCB"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "J7")
+					(reference "J5")
 					(unit 1)
 				)
 			)
@@ -9408,11 +9392,11 @@
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom yes)
-		(on_board yes)
+		(on_board no)
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f4c03939-9b69-420c-9090-059bd64ee9c8")
-		(property "Reference" "J5"
+		(property "Reference" "J6"
 			(at 154.94 80.0099 0)
 			(effects
 				(font
@@ -9469,7 +9453,7 @@
 		(instances
 			(project "SACRED_PCB"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
-					(reference "J5")
+					(reference "J6")
 					(unit 1)
 				)
 			)
@@ -9556,7 +9540,7 @@
 			(uuid "6f8c65de-f4fe-4c14-9aba-a21b0c6b14fb")
 		)
 		(instances
-			(project "SACRED_PCB"
+			(project "Daughter_PCB"
 				(path "/c42ada0c-3d7b-4fc2-91f0-3ee05de8b6fd"
 					(page "2")
 				)
