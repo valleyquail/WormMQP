@@ -1,24 +1,13 @@
 import copy
-
 import numpy as np
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
+from scipy.spatial.transform import Rotation as R
 from matplotlib import cm
+import itertools
 from Nodes import Node, MidpointNode, VertexNode
 from SensorEdge import SensorEdge
-import itertools
 
-
-# Reference Papers:
-# Title: Parametric design of developable structure based on Yoshimura origami pattern
-# DOI: 10.54113/j.sust.2022.000019
-
-# Title: Rigid-flexible coupled origami robots via multimaterial 3D printing
-# DOI: 10.1088/1361-665X/ad212c
-
-# Title: Energy absorption of thin-walled tubes with pre-folded
-# origami patterns: Numerical simulation and experimental verification
-# DOI: https://doi.org/10.1016/j.tws.2016.02.007
 
 def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0, prev_top_nodes=None):
     """ Generate a unit cell
@@ -87,12 +76,10 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     # The inset norm is the scalar distance from the line AB and C
     inset_norm = h_flat / 2 * np.cos(dihedral)
 
-    # The radius of the circumscribed circle of the polygon
     startingRadius = major_sl / (2 * np.sin(np.pi / num_sides))
 
     angles = np.linspace(0, 2 * np.pi, num_sides, endpoint=False)
     vertex_coords_base = []
-    # Rotate the base vertices to get the coordinates
     for angle in angles:
         rotation = np.array([[np.cos(angle), -np.sin(angle), 0], [np.sin(angle), np.cos(angle), 0], [0, 0, 1]])
         vertex_coords_base.append(np.array([startingRadius, 0, 0]).dot(rotation))
@@ -100,7 +87,6 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     vertex_coords_base = np.reshape(vertex_coords_base, (num_sides, 3))
     vertex_coords_top = vertex_coords_base + np.array([0, 0, base_height + h_unit])
 
-    # Create the base nodes and add them as neighbors
     if prev_top_nodes == None:
         baseNodes, baseEdges = parseArrayToNodes(vertex_coords_base, height_index, major_sl, 'vertex')
         nodeEdges += baseEdges
@@ -113,19 +99,12 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     else:
         topNodes, sensorEdges = parseArrayToSensors(vertex_coords_top, height_index + 1, major_sl)
 
-    # Define the first points of the midpoint coordinates
-    # X position is the x position of the first vertex on the major_sl side minus the inset norm
-    # Y position is the y position of the first vertex on the major_sl side minus half the minor_sl side length
-    # Z position is the mid height
-
     inset_pos_one = np.array([vertex_coords_base[0, 0] - inset_norm, minor_sl / 2])
     inset_neg_one = np.array([vertex_coords_base[0, 0] - inset_norm, -minor_sl / 2])
     inset_pos = []
     inset_neg = []
     for angle in angles:
-        # Define basic rotation matrix
         rotation = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
-        # Rotate the first point of the midpoint
         inset_pos.append(np.dot(rotation, inset_pos_one))
         inset_neg.append(np.dot(rotation, inset_neg_one))
 
@@ -138,38 +117,22 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
 
     midpoints = np.vstack((insets_pos, insets_neg))
 
-
-
     midpointNodes, midpointEdges = parseArrayToNodes(midpoints, height_index, minor_sl, 'midpoint')
     nodeEdges += midpointEdges
 
-    # The midpoint limiting distance is the sidelength of one of the diamonds in the pattern
-    # This is used to prevent the drawing of extra lines between the midpoints
     midpoint_to_vertex_dist = (minor_sl / 2) / np.cos(beta)
 
-    # Add the midpoints as neighbours to the vertices
     vertexNodes = baseNodes + topNodes
     for vertex in vertexNodes:
         for midpoint in midpointNodes:
             dist = norm(np.array(vertex.getPosition()) - np.array(midpoint.getPosition()))
-            # Midpoint limiter helps parse the edges between the vertices
-            # and the midpoints to prevent extra lines from being drawn
-            if  dist < midpoint_to_vertex_dist * 1.1:
+            if dist < midpoint_to_vertex_dist * 1.1:
                 nodeEdges += [(vertex, midpoint)]
 
     return baseNodes, topNodes, midpointNodes, nodeEdges, sensorEdges
 
 
-def organizeByLayer(nodes: list[Node]) -> dict[int, list[MidpointNode]]:
-    """
-     Organize the nodes into a dictionary based on their height index
-     Makes it very convenient for iterating through the nodes in a layer by layer
-     fashion and applying transformations
-
-     Also assigns the id to each node
-    :param nodes:
-    :return: a dictionary that maps the height index into a list of nodes at that index
-    """
+def organizeByLayer(nodes: list[Node]) -> dict[int, list[Node]]:
     organizedData = dict()
     curr_id = 0
     for node in nodes:
@@ -183,91 +146,233 @@ def organizeByLayer(nodes: list[Node]) -> dict[int, list[MidpointNode]]:
 
 
 def assignSensorIds(sensor_edges: list[SensorEdge]) -> dict[int, SensorEdge]:
-    """
-    Organize the edges into midpoint and vertex edges
-    @:param edges: the edges to be organized
-    @:return: a dict containing the midpoint edges and the vertex edges
-    """
     sensors = {}
     for i, edge in enumerate(sensor_edges):
         edge.setSensorID(i)
         sensors[i] = edge
     return sensors
 
-def generateFaces(nodes: list[Node], edges: list[tuple[Node, Node]]) -> list[tuple[Node]]:
+
+def forward_kinematics(vertices: list[Node], theta: float, side: str = 'right') -> None:
     """
-    Generate the faces of the arm
-    :param nodes: the nodes of the arm
-    :param edges: the edges of the arm
-    :return: a list of tuples containing the nodes of the face
+    Applies forward kinematics transformation with a truly fixed base.
+    The base nodes (level 0) will remain completely unchanged while the rest
+    of the structure bends smoothly above them.
     """
-    faces = []
-    starting = [edge[0] for edge in edges]
-    for node in starting:
-        corners = recurse_edges(edges, node, 0, [node], node)
-        # Check for a planar face and then skip it
-        check = [node.getPosition()[2] for node in corners]
-        if sum(check) == 4 * check[0]:
+
+    def get_level_nodes(nodes: list[Node]) -> dict[int, list[Node]]:
+        levels = {}
+        for node in nodes:
+            level = node.getLevel()
+            if level not in levels:
+                levels[level] = []
+            levels[level].append(node)
+        return levels
+
+    def get_level_center(nodes: list[Node]) -> np.ndarray:
+        positions = [np.array(node.getPosition()) for node in nodes]
+        return np.mean(positions, axis=0)
+
+    def transform_cross_section(nodes: list[Node], center: np.ndarray,
+                                new_center: np.ndarray, theta: float, t: float) -> None:
+
+        smooth_t = t * t * (3 - 2 * t)
+        rotation = np.array([
+            [np.cos(theta * smooth_t), 0, -np.sin(theta * smooth_t)],
+            [0, 1, 0],
+            [np.sin(theta * smooth_t), 0, np.cos(theta * smooth_t)]
+        ])
+
+        for node in nodes:
+            # Skip transformation if this is a vertex node at level 0
+            if node.getType() == 'vertex' and node.getLevel() == 0:
+                continue
+            pos = np.array(node.getPosition())
+            relative_pos = pos - center
+            new_pos = rotation @ relative_pos + new_center
+            node.set_position(tuple(new_pos))
+
+
+    level_groups = get_level_nodes(vertices)
+    if not level_groups:
+        return
+
+    base_nodes = level_groups[0]
+    base_center = get_level_center(base_nodes)
+    max_height = max(node.getPosition()[2] for node in vertices) - base_center[2]
+
+
+    for level, nodes in level_groups.items():
+
+        if level == 0:
             continue
-        if corners is not None:
-            faces.append(tuple(corners))
-    reversed(edges)
-    reversed(starting)
-    for node in starting:
-        corners = recurse_edges(edges, node, 0, [node], node)
-        # Check for a planar face and then skip it
-        check = [node.getPosition()[2] for node in corners]
-        if sum(check) == 4 * check[0]:
+
+        current_center = get_level_center(nodes)
+        current_height = current_center[2] - base_center[2]
+        t = current_height / max_height if max_height > 0 else 0
+
+
+        x_offset = max_height * np.sin(theta * t) * t
+        new_center = np.array([
+            base_center[0] + x_offset,
+            current_center[1],
+            current_center[2]
+        ])
+
+        transform_cross_section(nodes, current_center, new_center, theta, t)
+
+def asymmetric_forward_kinematics(vertices: list[Node], theta: float, side: str = 'right') -> None:
+
+    def get_segment_centers(nodes: list[Node]) -> tuple[np.ndarray, np.ndarray]:
+        base_points = []
+        top_points = []
+
+        for node in nodes:
+            pos = np.array(node.getPosition())
+            if node.getLevel() == 0:
+                base_points.append(pos)
+            elif node.getType() == 'vertex':
+                top_points.append(pos)
+
+        base_center = np.mean(np.array(base_points), axis=0)
+        top_center = np.mean(np.array(top_points), axis=0)
+        return base_center, top_center
+
+    def get_node_side(node_pos: np.ndarray, base_center: np.ndarray, side: str) -> float:
+
+        relative_pos = node_pos - base_center
+
+        if side == 'right':
+            return (np.tanh(relative_pos[0] / 50) + 1) / 2  # Scaled factor for smoother transition
+        elif side == 'left':
+            return (-np.tanh(relative_pos[0] / 50) + 1) / 2
+        elif side == 'front':
+            return (np.tanh(relative_pos[1] / 50) + 1) / 2
+        elif side == 'back':
+            return (-np.tanh(relative_pos[1] / 50) + 1) / 2
+        else:
+            return 1.0
+
+    def get_height_factor(node: Node, max_height: float) -> float:
+        node_height = node.getPosition()[2]
+        return node_height / max_height if max_height > 0 else 0
+
+    def create_rotation_matrix(theta: float) -> np.ndarray:
+        return np.array([
+            [np.cos(theta), 0, -np.sin(theta)],
+            [0, 1, 0],
+            [np.sin(theta), 0, np.cos(theta)]
+        ])
+
+    def transform_nodes(nodes: list[Node], base_center: np.ndarray,
+                        rotation_matrix: np.ndarray, side: str, max_height: float) -> None:
+        for node in nodes:
+            if node.getLevel() == 0:
+                continue
+
+            pos = np.array(node.getPosition())
+
+            height_factor = get_height_factor(node, max_height)
+            side_factor = get_node_side(pos, base_center, side)
+
+            total_factor = height_factor * side_factor
+
+            scaled_rotation = R.from_matrix(rotation_matrix).as_rotvec() * total_factor
+            scaled_rotation_matrix = R.from_rotvec(scaled_rotation).as_matrix()
+
+            pos_centered = pos - base_center
+            pos_rotated = scaled_rotation_matrix @ pos_centered
+            pos_final = pos_rotated + base_center
+
+            node.set_position(tuple(pos_final))
+
+    max_height = max(node.getPosition()[2] for node in vertices)
+
+
+    base_center, _ = get_segment_centers(vertices)
+    rotation_matrix = create_rotation_matrix(theta)
+
+    transform_nodes(vertices, base_center, rotation_matrix, side, max_height)
+
+
+def trapezoid_interface_kinematics(vertices: list[Node], midpoints: list[Node], interface_angle: float) -> None:
+
+    def find_interface_nodes(all_nodes: list[Node]) -> tuple[list[Node], list[Node]]:
+
+        all_heights = [node.z for node in all_nodes]
+        mid_height = (max(all_heights) + min(all_heights)) / 2
+
+        interface_nodes = []
+        other_nodes = []
+        height_tolerance = 0.1
+
+        for node in all_nodes:
+            if abs(node.z - mid_height) < height_tolerance:
+                interface_nodes.append(node)
+            else:
+                other_nodes.append(node)
+
+        return interface_nodes, other_nodes
+
+    def rotate_point(x: float, y: float, z: float,
+                     center_x: float, center_y: float, center_z: float,
+                     angle: float) -> tuple[float, float, float]:
+
+        translated_x = x - center_x
+        translated_z = z - center_z
+
+        # Rotate around Y-axis
+        cos_angle = np.cos(angle)
+        sin_angle = np.sin(angle)
+
+        new_x = translated_x * cos_angle - translated_z * sin_angle + center_x
+        new_z = translated_x * sin_angle + translated_z * cos_angle + center_z
+
+        return (new_x, y, new_z)
+
+
+    all_nodes = vertices + midpoints
+
+    interface_nodes, other_nodes = find_interface_nodes(all_nodes)
+
+    if len(interface_nodes) < 2:
+        return
+
+
+    center_x = sum(node.x for node in interface_nodes) / len(interface_nodes)
+    center_y = sum(node.y for node in interface_nodes) / len(interface_nodes)
+    center_z = sum(node.z for node in interface_nodes) / len(interface_nodes)
+
+    half_angle = interface_angle / 2
+
+
+    for node in other_nodes:
+        if node.getType() == 'vertex' and node.getLevel() == 0:
             continue
-        if corners is not None:
-            faces.append(tuple(corners))
-    faces = set(faces)
 
-    print("finished")
-    return faces
+        if node.z > center_z:
+            new_pos = rotate_point(node.x, node.y, node.z,
+                                   center_x, center_y, center_z,
+                                   half_angle)
+        else:
+            new_pos = rotate_point(node.x, node.y, node.z,
+                                   center_x, center_y, center_z,
+                                   -half_angle)
 
-def recurse_edges(edges: list[tuple[Node, Node]], node: Node, path_length: int, corners: list[Node], target: Node):
-    """
-    Recursively find the corners of the face
-    :param edges: the edges of the arm
-    :param node: the current node
-    :param path_length: the length of the current path
-    :param corners: list of corners of the face
-    :param target: the node to find
-    :return:
-    """
-    if path_length == 4:
-        return None
-    for edge in edges:
-        if node in edge:
-            node = edge[0] if edge[0] != node else edge[1]
-            if node == target:
-                return corners
-            corners.append(node)
-            edges.remove(edge)
-            out = recurse_edges(edges, node, path_length + 1, corners, target)
-            edges.append(edge)
-            if out is not None:
-                return out
-            # Reset the node to the previous node in the edge since that path was not viable
-            node = edge[0] if edge[0] != node else edge[1]
-            corners.pop()
-
-    return None
+        node.set_position(new_pos)
 
 
 class Arm():
     def __init__(self, beta: float, major_sl: float, minor_sl: float, num_sides: int, num_units: int):
-
         # List of midpoints
         _midpoints: list[MidpointNode] = []
         _vertices: list[VertexNode] = []
         _edgePairs: list[tuple[Node, Node]] = []
         _sensor_edges: list[SensorEdge] = []
-        # Array used to be fed back to the generate_unit function to make
-        # the next unit's base it the top of the previous unit
+
         tNodes = None
-        # Create and stack all the units into the organized data
+        self.current_theta = 0.0
+
         for i in range(num_units):
             bNodes, tNodes, cNodes, edges, sensors = generate_unit(beta, major_sl, minor_sl, num_sides, num_units, i,
                                                                    tNodes)
@@ -292,7 +397,6 @@ class Arm():
         self._default_pose = copy.deepcopy(self.arm_dict)
         self.edges: list[tuple[Node, MidpointNode]] = _edgePairs
         self.sensorEdges: dict[int, SensorEdge] = assignSensorIds(_sensor_edges)
-        self.faces: list[list[Node]] = generateFaces(_midpoints + _vertices, _edgePairs)
 
         self._beta: float = beta
         self._major_sl: float = major_sl
@@ -300,10 +404,10 @@ class Arm():
         self._num_sides: int = num_sides
         self._num_units: int = num_units
 
-    # TODO: Rewrite this function to use the arm_dict to reassign the stuff in the edges and the sensorEdges
     def resetPose(self) -> None:
         def sort_key(node: Node):
             return node.get_id()
+
         default_nodes = list(itertools.chain.from_iterable(self._default_pose.values()))[0]
         default_nodes = sorted(default_nodes, key=sort_key)
         nodes = list(itertools.chain.from_iterable(self.arm_dict.values()))[0]
@@ -312,8 +416,27 @@ class Arm():
             nodes[i].set_position(default_nodes[i].getPosition())
 
     def forwardKinematics(self, theta: float) -> None:
-        pass
+        current_nodes = self._vertices + self._midpoints
+        forward_kinematics(current_nodes, theta)
+        self.current_theta = theta
 
+        for sensor in self.sensorEdges.values():
+            sensor.updatePositions()
+
+    def setInterfaceAngle(self, angle: float) -> None:
+        # Save current angle for reference
+        self.current_angle = angle
+
+        # Apply kinematics
+        trapezoid_interface_kinematics(self._vertices, self._midpoints, angle)
+
+        # Update all sensor edges to track deformation
+        for sensor in self.sensorEdges.values():
+            sensor.updatePositions()
+
+    def getInterfaceStrain(self) -> dict[int, float]:
+        return {sensor_id: sensor.getStrain()
+                for sensor_id, sensor in self.sensorEdges.items()}
     def drawArm(self) -> None:
         def extractPoints() -> (np.ndarray, np.ndarray):
             vertex_points = []
@@ -344,22 +467,13 @@ class Arm():
             neighbourPos = neighbour.getPosition()
             ax.plot([nodePos[0], neighbourPos[0]],
                     [nodePos[1], neighbourPos[1]],
-                    [nodePos[2], neighbourPos[2]], c="k", lw=10)
+                    [nodePos[2], neighbourPos[2]], c="k", lw=1)
 
         for sensorEdge in self.sensorEdges.values():
             node1Pos, node2Pos = sensorEdge.getEndPoints()
             ax.plot([node1Pos[0], node2Pos[0]],
                     [node1Pos[1], node2Pos[1]],
-                    [node1Pos[2], node2Pos[2]], c="r", lw=10)
-
-        for shape in self.faces:
-
-            data = np.array([node.getPosition() for node in shape]).reshape(-1, 3)
-            x = data[:, 0]
-            y = data[:, 1]
-            z = data[:, 2]
-            ax.plot_trisurf(x, y, z, alpha=.5, cmap=cm.Blues)
-
+                    [node1Pos[2], node2Pos[2]], c="r", lw=1.5)
 
         ax.set_xlim(-100, 100)
         ax.set_ylim(-100, 100)
@@ -371,6 +485,9 @@ class Arm():
 
 
 if __name__ == '__main__':
-    arm = Arm(np.pi * 35 / 180, 60, 40, 4, 1)
+    # Create arm with default parameters
+    arm = Arm(np.pi * 35 / 180, 60, 40, 4, 2)
+    # Set interface angle and visualize
+    arm.setInterfaceAngle(np.pi / 9)
+
     arm.drawArm()
-    pass
