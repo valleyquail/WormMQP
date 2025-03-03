@@ -761,32 +761,48 @@
 				)
 			)
 		)
-		(symbol "Amplifier_Operational:OPA188xxDBV"
+		(symbol "Amplifier_Operational:OPA690xDBV"
 			(pin_names
 				(offset 0.127)
 			)
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "U"
+			(property "Reference" "U5"
+				(at 12.7 6.3186 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "OPA607Q1"
+				(at 12.7 3.7786 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.ti.com/lit/ds/symlink/opa690.pdf"
 				(at 0 5.08 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left)
+					(hide yes)
 				)
 			)
-			(property "Value" "OPA188xxDBV"
-				(at 0 -5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" "Package_TO_SOT_SMD:TSOT-23-5"
+			(property "Description" "Single Low-Power, 500 MHz GBW, ±2.5V to ±5V Dual Supply, 5V to 12V Single Supply, 190mA output current, 1.8kV/us slew rate, Voltage-Feedback Operational Amplifier with Disable, SOT-23-6"
 				(at 0 0 0)
 				(effects
 					(font
@@ -795,16 +811,7 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "http://www.ti.com/lit/ds/symlink/opa188.pdf"
-				(at 0 5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Zero-Drift, Precision, Low-Noise, Rail-to-Rail Output, 36-V Operational Amplifier, TSOT-23-5"
+			(property "Sim.Library" "SPICE/sbomb65a/opa607.lib"
 				(at 0 0 0)
 				(effects
 					(font
@@ -813,7 +820,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "single opamp zero-drift"
+			(property "Sim.Name" "OPA607"
 				(at 0 0 0)
 				(effects
 					(font
@@ -822,7 +829,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_fp_filters" "TSOT*23*"
+			(property "Sim.Device" "SUBCKT"
 				(at 0 0 0)
 				(effects
 					(font
@@ -831,7 +838,34 @@
 					(hide yes)
 				)
 			)
-			(symbol "OPA188xxDBV_0_1"
+			(property "Sim.Pins" "1=IN+ 2=IN- 3=OUT 4=VCC 5=VEE"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "opamp texas"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "SOT?23*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "OPA690xDBV_0_1"
 				(polyline
 					(pts
 						(xy -5.08 5.08) (xy 5.08 0) (xy -5.08 -5.08) (xy -5.08 5.08)
@@ -872,7 +906,7 @@
 							)
 						)
 					)
-					(number "5"
+					(number "6"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -881,25 +915,7 @@
 					)
 				)
 			)
-			(symbol "OPA188xxDBV_1_1"
-				(pin output line
-					(at 7.62 0 180)
-					(length 2.54)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
+			(symbol "OPA690xDBV_1_1"
 				(pin input line
 					(at -7.62 2.54 0)
 					(length 2.54)
@@ -910,7 +926,7 @@
 							)
 						)
 					)
-					(number "3"
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -928,7 +944,43 @@
 							)
 						)
 					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 7.62 0 180)
+					(length 2.54)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
 					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 0 -7.62 90)
+					(length 5.08)
+					(name "~{DIS}"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3210,6 +3262,12 @@
 		(uuid "7467e4c1-a956-46c2-89e2-05c6735f89ef")
 	)
 	(junction
+		(at 104.14 88.9)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "87aec20a-e732-4187-afef-be05ff5c8440")
+	)
+	(junction
 		(at 120.65 127)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3435,7 +3493,7 @@
 	)
 	(wire
 		(pts
-			(xy 160.02 35.56) (xy 160.02 40.64)
+			(xy 160.02 35.56) (xy 160.02 39.37)
 		)
 		(stroke
 			(width 0)
@@ -3602,6 +3660,16 @@
 			(type default)
 		)
 		(uuid "436c8ef9-3e1c-43b6-8daf-c9852c19e563")
+	)
+	(wire
+		(pts
+			(xy 92.71 88.9) (xy 92.71 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "43d12d07-d75a-4633-87ca-ff28efecc38c")
 	)
 	(wire
 		(pts
@@ -4195,7 +4263,7 @@
 	)
 	(wire
 		(pts
-			(xy 160.02 48.26) (xy 160.02 45.72)
+			(xy 160.02 48.26) (xy 160.02 44.45)
 		)
 		(stroke
 			(width 0)
@@ -4212,6 +4280,16 @@
 			(type default)
 		)
 		(uuid "cb263b77-3883-40a7-97d4-fd05b57668a1")
+	)
+	(wire
+		(pts
+			(xy 92.71 104.14) (xy 101.6 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cb8307d1-c99c-4592-a727-027a91bfb10d")
 	)
 	(wire
 		(pts
@@ -4372,6 +4450,16 @@
 			(type default)
 		)
 		(uuid "f60c15b4-01a2-4a61-bba3-bf5aa78a33d9")
+	)
+	(wire
+		(pts
+			(xy 104.14 88.9) (xy 92.71 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fb08f5d9-ca26-4969-a8c8-b885ceb158e0")
 	)
 	(wire
 		(pts
@@ -4538,7 +4626,7 @@
 	)
 	(hierarchical_label "MUX_3"
 		(shape input)
-		(at 193.04 33.02 180)
+		(at 193.04 38.1 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4560,7 +4648,7 @@
 	)
 	(hierarchical_label "MUX_0"
 		(shape input)
-		(at 193.04 38.1 180)
+		(at 193.04 33.02 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4571,7 +4659,7 @@
 	)
 	(hierarchical_label "MUX_1"
 		(shape input)
-		(at 193.04 40.64 180)
+		(at 193.04 35.56 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4582,7 +4670,7 @@
 	)
 	(hierarchical_label "MUX_2"
 		(shape input)
-		(at 193.04 35.56 180)
+		(at 193.04 40.64 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6612,7 +6700,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 134.62 41.91 0)
 			(effects
 				(font
@@ -6889,7 +6977,7 @@
 		(dnp no)
 		(uuid "b31b0895-6746-4352-85ab-82ae75640d7c")
 		(property "Reference" "C9"
-			(at 96.5137 101.6 90)
+			(at 99.314 109.728 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6897,7 +6985,7 @@
 			)
 		)
 		(property "Value" "1pF"
-			(at 96.5137 104.14 90)
+			(at 99.314 112.268 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7014,7 +7102,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Amplifier_Operational:OPA188xxDBV")
+		(lib_id "Amplifier_Operational:OPA690xDBV")
 		(at 101.6 96.52 0)
 		(mirror y)
 		(unit 1)
@@ -7024,7 +7112,7 @@
 		(dnp no)
 		(uuid "bb77aea3-aaf4-41b5-bb72-6b6cf15b08f8")
 		(property "Reference" "U5"
-			(at 88.9 90.2014 0)
+			(at 110.998 87.122 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7032,14 +7120,14 @@
 			)
 		)
 		(property "Value" "OPA607Q1"
-			(at 88.9 92.7414 0)
+			(at 110.998 89.916 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:TSOT-23-5_HandSoldering"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-363_SC-70-6_Handsoldering"
 			(at 101.6 96.52 0)
 			(effects
 				(font
@@ -7048,7 +7136,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/opa607-q1.pdf?ts=1737552136542&ref_url=https%253A%252F%252Flv.mouser.com%252F"
+		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/opa690.pdf"
 			(at 101.6 91.44 0)
 			(effects
 				(font
@@ -7057,7 +7145,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Automotive, 50-MHz , Rail to Rail Output CMOS Operational Amplifier"
+		(property "Description" "Single Low-Power, 500 MHz GBW, ±2.5V to ±5V Dual Supply, 5V to 12V Single Supply, 190mA output current, 1.8kV/us slew rate, Voltage-Feedback Operational Amplifier with Disable, SOT-23-6"
 			(at 101.6 96.52 0)
 			(effects
 				(font
@@ -7116,6 +7204,9 @@
 		)
 		(pin "4"
 			(uuid "2cb1ad88-cd1d-4b0e-86d8-1ce0f6ffe825")
+		)
+		(pin "6"
+			(uuid "17901d45-9072-4fbe-96e0-312feebf4414")
 		)
 		(instances
 			(project "Daughter_PCB"
@@ -7623,7 +7714,7 @@
 	)
 	(symbol
 		(lib_id "Device:C_Small")
-		(at 160.02 43.18 0)
+		(at 160.02 41.91 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7632,7 +7723,7 @@
 		(fields_autoplaced yes)
 		(uuid "ff8f16f3-4d7d-40b9-80a7-229c0467b529")
 		(property "Reference" "C4"
-			(at 162.56 41.9163 0)
+			(at 162.56 40.6463 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7641,7 +7732,7 @@
 			)
 		)
 		(property "Value" "10uF"
-			(at 162.56 44.4563 0)
+			(at 162.56 43.1863 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7649,8 +7740,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
-			(at 160.02 43.18 0)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7659,7 +7750,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7668,7 +7759,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7677,7 +7768,7 @@
 			)
 		)
 		(property "LCSC Part #" "C13585"
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7686,7 +7777,7 @@
 			)
 		)
 		(property "JLCPCB Position Offset" ""
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7695,7 +7786,7 @@
 			)
 		)
 		(property "JLCPCB Rotation Offset" ""
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7704,7 +7795,7 @@
 			)
 		)
 		(property "Availability" ""
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7713,7 +7804,7 @@
 			)
 		)
 		(property "Check_prices" ""
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7722,7 +7813,7 @@
 			)
 		)
 		(property "MF" ""
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7731,7 +7822,7 @@
 			)
 		)
 		(property "MP" ""
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7740,7 +7831,7 @@
 			)
 		)
 		(property "Package" ""
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7749,7 +7840,7 @@
 			)
 		)
 		(property "Price" ""
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7758,7 +7849,7 @@
 			)
 		)
 		(property "SnapEDA_Link" ""
-			(at 160.02 43.18 0)
+			(at 160.02 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)

@@ -51,7 +51,13 @@
           "min_clearance": 0.5
         }
       },
-      "diff_pair_dimensions": [],
+      "diff_pair_dimensions": [
+        {
+          "gap": 0.0,
+          "via_gap": 0.0,
+          "width": 0.0
+        }
+      ],
       "drc_exclusions": [],
       "meta": {
         "version": 2
@@ -171,7 +177,9 @@
           "td_width_to_size_filter_ratio": 0.9
         }
       ],
-      "track_widths": [],
+      "track_widths": [
+        0.0
+      ],
       "tuning_pattern_settings": {
         "diff_pair_defaults": {
           "corner_radius_percentage": 80,
@@ -198,7 +206,12 @@
           "spacing": 0.6
         }
       },
-      "via_dimensions": [],
+      "via_dimensions": [
+        {
+          "diameter": 0.0,
+          "drill": 0.0
+        }
+      ],
       "zones_allow_external_fillets": false
     },
     "ipc2581": {
@@ -220,7 +233,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "panelized.kicad_pro",
+    "filename": "panelized4.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -319,115 +332,11 @@
     "netclass_patterns": [
       {
         "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J17-Pin_4)"
-      },
-      {
-        "netclass": "Board_0-Default",
         "pattern": "Board_0-/MUX_1"
       },
       {
         "netclass": "Board_0-Default",
-        "pattern": "Board_0-/MUX_2"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(JP1-B)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(U5--)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(JP2-A)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-+5V"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J17-Pin_8)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J18-Pin_5)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-/MUX_0"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J17-Pin_3)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J18-Pin_4)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J18-Pin_7)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J17-Pin_2)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(U4-COM)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-/MUX_3"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J18-Pin_1)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J18-Pin_6)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J17-Pin_5)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J17-Pin_6)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J17-Pin_7)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-/Analog_0"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J17-Pin_1)"
-      },
-      {
-        "netclass": "Board_0-Default",
         "pattern": "Board_0-Net-(JP2-B)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-GND"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J18-Pin_8)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-Net-(J18-Pin_2)"
-      },
-      {
-        "netclass": "Board_0-Default",
-        "pattern": "Board_0-+12V"
       },
       {
         "netclass": "Board_0-Default",
@@ -438,12 +347,192 @@
         "pattern": "Board_0-+3.3V"
       },
       {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J18-Pin_1)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J17-Pin_6)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J18-Pin_6)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-/Analog_0"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J17-Pin_3)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(U4-COM)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-/MUX_2"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J17-Pin_1)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J18-Pin_2)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J17-Pin_7)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(U5--)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-+5V"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-/MUX_3"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J17-Pin_4)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(JP1-B)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J18-Pin_5)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-GND"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J17-Pin_5)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J17-Pin_2)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-/MUX_0"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(JP2-A)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J18-Pin_8)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J17-Pin_8)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-+12V"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J18-Pin_7)"
+      },
+      {
+        "netclass": "Board_0-Default",
+        "pattern": "Board_0-Net-(J18-Pin_4)"
+      },
+      {
         "netclass": "Board_1-Default",
         "pattern": "Board_1-/MUX_1"
       },
       {
         "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J17-Pin_3)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-GND"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J17-Pin_4)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J18-Pin_7)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J17-Pin_6)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-+3.3V"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J18-Pin_5)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J17-Pin_1)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(JP2-B)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-/Analog_0"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(JP1-B)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J18-Pin_1)"
+      },
+      {
+        "netclass": "Board_1-Default",
         "pattern": "Board_1-Net-(J18-Pin_4)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J18-Pin_2)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J17-Pin_5)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-/MUX_0"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J17-Pin_7)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(J18-Pin_6)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-Net-(JP2-A)"
+      },
+      {
+        "netclass": "Board_1-Default",
+        "pattern": "Board_1-+12V"
       },
       {
         "netclass": "Board_1-Default",
@@ -455,63 +544,7 @@
       },
       {
         "netclass": "Board_1-Default",
-        "pattern": "Board_1-+3.3V"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J17-Pin_2)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(JP1-B)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-GND"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J17-Pin_1)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-/MUX_0"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J18-Pin_1)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-/MUX_3"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J17-Pin_6)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J17-Pin_4)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-+12V"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(JP2-A)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J18-Pin_6)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-/MUX_2"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J17-Pin_7)"
+        "pattern": "Board_1-Net-(J17-Pin_8)"
       },
       {
         "netclass": "Board_1-Default",
@@ -519,11 +552,7 @@
       },
       {
         "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(U4-COM)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J18-Pin_7)"
+        "pattern": "Board_1-/MUX_2"
       },
       {
         "netclass": "Board_1-Default",
@@ -531,99 +560,15 @@
       },
       {
         "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(JP2-B)"
+        "pattern": "Board_1-Net-(J17-Pin_2)"
       },
       {
         "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J17-Pin_8)"
+        "pattern": "Board_1-/MUX_3"
       },
       {
         "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J17-Pin_5)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J18-Pin_5)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-/Analog_0"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J18-Pin_2)"
-      },
-      {
-        "netclass": "Board_1-Default",
-        "pattern": "Board_1-Net-(J17-Pin_3)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J18-Pin_3)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-/MUX_1"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(JP2-B)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-+12V"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J18-Pin_4)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J17-Pin_2)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J17-Pin_7)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(JP1-B)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J17-Pin_5)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J18-Pin_8)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-/MUX_2"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(U4-COM)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-/MUX_0"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-/MUX_3"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J18-Pin_1)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J18-Pin_5)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(JP2-A)"
+        "pattern": "Board_1-Net-(U4-COM)"
       },
       {
         "netclass": "Board_2-Default",
@@ -631,23 +576,7 @@
       },
       {
         "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J18-Pin_2)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J17-Pin_6)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(J17-Pin_8)"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-+5V"
-      },
-      {
-        "netclass": "Board_2-Default",
-        "pattern": "Board_2-+3.3V"
+        "pattern": "Board_2-/MUX_3"
       },
       {
         "netclass": "Board_2-Default",
@@ -655,7 +584,27 @@
       },
       {
         "netclass": "Board_2-Default",
-        "pattern": "Board_2-/Analog_0"
+        "pattern": "Board_2-/MUX_1"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J17-Pin_7)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J18-Pin_1)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-+12V"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J18-Pin_2)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J17-Pin_5)"
       },
       {
         "netclass": "Board_2-Default",
@@ -667,7 +616,39 @@
       },
       {
         "netclass": "Board_2-Default",
-        "pattern": "Board_2-Net-(U5--)"
+        "pattern": "Board_2-/Analog_0"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(JP2-A)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(U4-COM)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J17-Pin_6)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J17-Pin_2)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-+5V"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-+3.3V"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J18-Pin_8)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-/MUX_0"
       },
       {
         "netclass": "Board_2-Default",
@@ -675,15 +656,39 @@
       },
       {
         "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J18-Pin_4)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J17-Pin_8)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J18-Pin_3)"
+      },
+      {
+        "netclass": "Board_2-Default",
         "pattern": "Board_2-GND"
       },
       {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-+5V"
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(JP2-B)"
       },
       {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-/MUX_2"
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(JP1-B)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-/MUX_2"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(J18-Pin_5)"
+      },
+      {
+        "netclass": "Board_2-Default",
+        "pattern": "Board_2-Net-(U5--)"
       },
       {
         "netclass": "Board_3-Default",
@@ -691,19 +696,7 @@
       },
       {
         "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(J17-Pin_5)"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(J18-Pin_5)"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(U4-COM)"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-+12V"
+        "pattern": "Board_3-Net-(J17-Pin_1)"
       },
       {
         "netclass": "Board_3-Default",
@@ -711,7 +704,7 @@
       },
       {
         "netclass": "Board_3-Default",
-        "pattern": "Board_3-/MUX_3"
+        "pattern": "Board_3-Net-(JP1-B)"
       },
       {
         "netclass": "Board_3-Default",
@@ -723,7 +716,7 @@
       },
       {
         "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(JP1-B)"
+        "pattern": "Board_3-Net-(J18-Pin_8)"
       },
       {
         "netclass": "Board_3-Default",
@@ -731,39 +724,7 @@
       },
       {
         "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(J17-Pin_6)"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-+3.3V"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-/Analog_0"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(J17-Pin_8)"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(J18-Pin_7)"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-GND"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(U5--)"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-/MUX_1"
-      },
-      {
-        "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(J17-Pin_7)"
+        "pattern": "Board_3-Net-(J17-Pin_5)"
       },
       {
         "netclass": "Board_3-Default",
@@ -771,7 +732,7 @@
       },
       {
         "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(J17-Pin_1)"
+        "pattern": "Board_3-Net-(J17-Pin_6)"
       },
       {
         "netclass": "Board_3-Default",
@@ -779,11 +740,27 @@
       },
       {
         "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(J17-Pin_4)"
+        "pattern": "Board_3-Net-(J17-Pin_8)"
       },
       {
         "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(J18-Pin_8)"
+        "pattern": "Board_3-+12V"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-/MUX_3"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-Net-(U5--)"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-Net-(J18-Pin_1)"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-GND"
       },
       {
         "netclass": "Board_3-Default",
@@ -795,7 +772,43 @@
       },
       {
         "netclass": "Board_3-Default",
-        "pattern": "Board_3-Net-(J18-Pin_1)"
+        "pattern": "Board_3-/Analog_0"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-Net-(U4-COM)"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-+5V"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-Net-(J17-Pin_4)"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-Net-(J18-Pin_7)"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-/MUX_2"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-Net-(J18-Pin_5)"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-+3.3V"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-Net-(J17-Pin_7)"
+      },
+      {
+        "netclass": "Board_3-Default",
+        "pattern": "Board_3-/MUX_1"
       }
     ]
   },
