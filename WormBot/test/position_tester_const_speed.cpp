@@ -121,15 +121,6 @@ void report()
   if ( millis()-last_report>REPORT_INTERVAL)
   {
     last_report=millis();
-    // Serial.print("C: ");
-    // Serial.print(cycle);
-    // Serial.print(" T: ");
-    // Serial.print(millis());
-    // Serial.print(" P: ");
-    // Serial.print(stepper.currentPosition());
-    // Serial.print(" V: ");
-    // Serial.println(sum/count);
-    // Serial.println("C: "+String(cycle)+" P: "+String(stepper.currentPosition())+" V: "+String(sum/count));
     Serial.println(String(cycle)+":"+String(stepper.currentPosition())+":"+String(sum/count));
     // logFile.println(String(cycle)+":"+String(stepper.currentPosition())+":"+String(sum/count));
     sum = 0;
