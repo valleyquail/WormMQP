@@ -1,0 +1,48 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+#Lots of random stuff
+SACRED_PCB/SACRED_PCB-backups/*
+SACRED_PCB/SPICE
+SACRED_PCB/'#auto_saved_files#
+
+EmailPics/*
+
+WormBot/WormBotPython/.idea/*
+WormBot/WormBotPython/__pycache__/*
+WormBot/.vscode/*
+
+*.stl
+*.bgcode
+*.gcode
+*.idea
