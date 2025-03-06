@@ -64,8 +64,8 @@
       39,
       40
     ],
-    "visible_layers": "ffdfeff_ffffffff",
-    "zone_display_mode": 1
+    "visible_layers": "ffcfecf_ffffffff",
+    "zone_display_mode": 0
   },
   "git": {
     "repo_password": "",
@@ -74,7 +74,7 @@
     "ssh_key": ""
   },
   "meta": {
-    "filename": "SACRED_PCB.kicad_prl",
+    "filename": "Daughter_PCB.kicad_prl",
     "version": 3
   },
   "project": {

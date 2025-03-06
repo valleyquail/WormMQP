@@ -45,3 +45,4 @@ WormBot/.vscode/*
 *.stl
 *.bgcode
 *.gcode
+*.idea

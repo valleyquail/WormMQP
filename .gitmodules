@@ -1,0 +1,3 @@
+[submodule "WormBot/include/ADC"]
+	path = WormBot/include/ADC
+	url = git@github.com:pedvide/ADC.git
