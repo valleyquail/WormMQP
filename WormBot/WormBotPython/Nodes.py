@@ -32,7 +32,7 @@ class Node:
         self.y = y
         self.z = z
 
-    @dispatch(tuple[float, float, float])
+    @dispatch(float, float, float)
     def set_position(self, pos: tuple[float, float, float]) -> None:
         self.x, self.y, self.z = pos[0]
 

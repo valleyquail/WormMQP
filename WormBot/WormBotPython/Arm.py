@@ -5,6 +5,7 @@ from numpy.linalg import norm
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from Nodes import Node, MidpointNode, VertexNode
+from DH_Kinematics import apply_dh_kinematics
 from SensorEdge import SensorEdge
 import itertools
 
@@ -160,15 +161,9 @@ def generate_unit(beta, major_sl, minor_sl, num_sides, num_units, height_index=0
     return baseNodes, topNodes, midpointNodes, nodeEdges, sensorEdges
 
 
-def organizeByLayer(nodes: list[Node]) -> dict[int, list[MidpointNode]]:
+def organizeByLayer(nodes: list[Node]) -> dict[int, list[Node]]:
     """
-     Organize the nodes into a dictionary based on their height index
-     Makes it very convenient for iterating through the nodes in a layer by layer
-     fashion and applying transformations
-
-     Also assigns the id to each node
-    :param nodes:
-    :return: a dictionary that maps the height index into a list of nodes at that index
+    Organize the nodes into a dictionary based on their height index
     """
     organizedData = dict()
     curr_id = 0
@@ -177,7 +172,7 @@ def organizeByLayer(nodes: list[Node]) -> dict[int, list[MidpointNode]]:
         if height_idx not in organizedData:
             organizedData[height_idx] = []
         node.id = curr_id
-        organizedData[height_idx].append(nodes)
+        organizedData[height_idx].append(node)  # Changed from 'nodes' to 'node'
         curr_id += 1
     return organizedData
 
@@ -292,7 +287,7 @@ class Arm():
         self._default_pose = copy.deepcopy(self.arm_dict)
         self.edges: list[tuple[Node, MidpointNode]] = _edgePairs
         self.sensorEdges: dict[int, SensorEdge] = assignSensorIds(_sensor_edges)
-        self.faces: list[list[Node]] = generateFaces(_midpoints + _vertices, _edgePairs)
+       # self.faces: list[list[Node]] = generateFaces(_midpoints + _vertices, _edgePairs)
 
         self._beta: float = beta
         self._major_sl: float = major_sl
@@ -302,28 +297,81 @@ class Arm():
 
     # TODO: Rewrite this function to use the arm_dict to reassign the stuff in the edges and the sensorEdges
     def resetPose(self) -> None:
-        def sort_key(node: Node):
-            return node.get_id()
-        default_nodes = list(itertools.chain.from_iterable(self._default_pose.values()))[0]
-        default_nodes = sorted(default_nodes, key=sort_key)
-        nodes = list(itertools.chain.from_iterable(self.arm_dict.values()))[0]
-        nodes = sorted(nodes, key=sort_key)
-        for i in range(len(nodes)):
-            nodes[i].set_position(default_nodes[i].getPosition())
+        """Reset arm to its default pose."""
+        # For each level
+        for level in self.arm_dict:
+            if level in self._default_pose:
+                # For each node in this level
+                for i, node in enumerate(self.arm_dict[level]):
+                    if i < len(self._default_pose[level]):
+                        # Get the corresponding default position
+                        default_pos = self._default_pose[level][i].getPosition()
+                        # Reset to default position
+                        node.set_position(default_pos)
 
-    def forwardKinematics(self, theta: float) -> None:
-        pass
+    def calculate_unit_height(self):
+        """
+        Calculate the height of a single unit in the origami pattern.
+
+        Args:
+            beta: The angle parameter for the origami pattern (in radians)
+            minor_sl: The length of the minor side
+            num_sides: The number of sides in the polygon
+
+        Returns:
+            The height of a single unit when folded
+        """
+        # Total height of a unit when unfolded
+        h_flat = 2 * (self._minor_sl / 2) * np.tan(self._beta)
+
+        # Calculate the dihedral angle
+        dihedral = np.arccos((self._minor_sl / h_flat) * np.tan(np.pi / (2 * self._num_sides)))
+
+        # The height of a unit when folded
+        h_unit = h_flat * np.sin(dihedral)
+
+        return h_unit
+
+    def applyDHKinematics(self, bend_angles, axes=None):
+        if axes is None:
+            axes = ['y'] * len(bend_angles)
+
+        all_vertices = self._vertices + self._midpoints
+        unit_height = self.calculate_unit_height()
+
+        print(f"Applying DH kinematics with unit height: {unit_height}")
+        print(f"Bend angles: {bend_angles}")
+
+        # Get a sample node position before transformation
+        if all_vertices:
+            sample_node = all_vertices[0]
+            before_pos = sample_node.getPosition()
+
+        apply_dh_kinematics(all_vertices, unit_height, bend_angles, axes)
+
+        # Check if position changed
+        if all_vertices:
+            after_pos = sample_node.getPosition()
+            print(f"Sample node moved from {before_pos} to {after_pos}")
 
     def drawArm(self) -> None:
         def extractPoints() -> (np.ndarray, np.ndarray):
             vertex_points = []
             midpoint_points = []
-            nodes = list(itertools.chain.from_iterable(self.arm_dict.values()))[0]
-            for n in nodes:
-                if n.getType() == 'midpoint':
-                    midpoint_points.append(n.getPosition())
-                else:
-                    vertex_points.append(n.getPosition())
+
+            # Iterate through all levels in the arm_dict
+            for level in self.arm_dict:
+                # Iterate through all nodes at this level
+                for node in self.arm_dict[level]:
+                    if node.getType() == 'midpoint':
+                        midpoint_points.append(node.getPosition())
+                    else:
+                        vertex_points.append(node.getPosition())
+
+            # Safety check in case no points were found
+            if not vertex_points or not midpoint_points:
+                return np.array([]), np.array([])
+
             midpoints = np.reshape(midpoint_points, (-1, 3))
             vertices = np.reshape(vertex_points, (-1, 3))
             return vertices, midpoints
@@ -344,21 +392,21 @@ class Arm():
             neighbourPos = neighbour.getPosition()
             ax.plot([nodePos[0], neighbourPos[0]],
                     [nodePos[1], neighbourPos[1]],
-                    [nodePos[2], neighbourPos[2]], c="k", lw=10)
+                    [nodePos[2], neighbourPos[2]], c="k", lw=3)
 
         for sensorEdge in self.sensorEdges.values():
             node1Pos, node2Pos = sensorEdge.getEndPoints()
             ax.plot([node1Pos[0], node2Pos[0]],
                     [node1Pos[1], node2Pos[1]],
-                    [node1Pos[2], node2Pos[2]], c="r", lw=10)
+                    [node1Pos[2], node2Pos[2]], c="r", lw=3)
 
-        for shape in self.faces:
-
-            data = np.array([node.getPosition() for node in shape]).reshape(-1, 3)
-            x = data[:, 0]
-            y = data[:, 1]
-            z = data[:, 2]
-            ax.plot_trisurf(x, y, z, alpha=.5, cmap=cm.Blues)
+        # for shape in self.faces:
+        #
+        #     data = np.array([node.getPosition() for node in shape]).reshape(-1, 3)
+        #     x = data[:, 0]
+        #     y = data[:, 1]
+        #     z = data[:, 2]
+        #     ax.plot_trisurf(x, y, z, alpha=.5, cmap=cm.Blues)
 
 
         ax.set_xlim(-100, 100)
@@ -371,6 +419,16 @@ class Arm():
 
 
 if __name__ == '__main__':
-    arm = Arm(np.pi * 35 / 180, 60, 40, 4, 1)
+    # Create the arm
+    arm = Arm(np.pi * 35 / 180, 60, 40, 3, 4)  # 3-sided, 4 units
+
+    # Define bend angles and axes
+    bend_angles = [np.pi / 6, np.pi / 8, np.pi / 10]  # 30°, 22.5°, 18°
+    bend_axes = ['y', 'y', 'y']  # Bend around y-axis for all interfaces
+
+    # Apply the DH kinematics
+    arm.applyDHKinematics(bend_angles, bend_axes)
+
+    # Visualize the result
     arm.drawArm()
     pass
